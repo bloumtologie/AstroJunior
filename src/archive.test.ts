@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { isEventsArchive } from "./archive";
+import { isEventsArchive, type EventsArchive } from "./archive";
 
-const archiveFixture = {
+const archiveFixture: EventsArchive = {
   meta: {
     source: "synthetic validation fixture",
     retrieved: "2026-11-14",
@@ -33,6 +33,28 @@ describe("archive validation", () => {
   it("rejects scenarios that reference missing events", () => {
     const invalidArchive = structuredClone(archiveFixture);
     invalidArchive.scenario.days[0].eventIds = ["missing-event"];
+
+    expect(isEventsArchive(invalidArchive)).toBe(false);
+  });
+
+  it("rejects non-consecutive scenario dates", () => {
+    const invalidArchive = structuredClone(archiveFixture);
+    invalidArchive.scenario.days[3].date = "2024-05-09";
+
+    expect(isEventsArchive(invalidArchive)).toBe(false);
+  });
+
+  it("rejects CME delays outside the supported one-to-three-day range", () => {
+    const invalidArchive = structuredClone(archiveFixture);
+    invalidArchive.events[0].type = "cme";
+    invalidArchive.events[0].cmeDelayDays = 4;
+
+    expect(isEventsArchive(invalidArchive)).toBe(false);
+  });
+
+  it("rejects unsafe event URLs", () => {
+    const invalidArchive = structuredClone(archiveFixture);
+    invalidArchive.events[0].donkiUrl = "javascript:alert(1)";
 
     expect(isEventsArchive(invalidArchive)).toBe(false);
   });
