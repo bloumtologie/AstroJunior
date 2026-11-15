@@ -15,7 +15,7 @@ type Props = {
   onLocaleChange: (locale: Locale) => void;
   onSoundToggle: () => void;
   onVoiceToggle: () => void;
-  onShowSources: () => void;
+  onShowAbout: () => void;
   onStart: () => void;
   onHowToPlay: () => void;
 };
@@ -33,7 +33,7 @@ export function Briefing({
   onLocaleChange,
   onSoundToggle,
   onVoiceToggle,
-  onShowSources,
+  onShowAbout,
   onStart,
   onHowToPlay,
 }: Props) {
@@ -97,7 +97,7 @@ export function Briefing({
             value={crewName}
           />
         </label>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           <button className="secondary-button text-sm" onClick={onHowToPlay} type="button">
             {t(locale, "howToPlay")}
           </button>
@@ -132,11 +132,11 @@ export function Briefing({
             🗣️ {t(locale, "voiceControl")}
           </button>
           <button
-            className="secondary-button col-span-2 border-life/60 text-sm sm:col-span-1"
-            onClick={onShowSources}
+            className="secondary-button col-span-2 text-sm sm:col-span-1"
+            onClick={onShowAbout}
             type="button"
           >
-            🛰️ {t(locale, "verifiedNasaData")}
+            ℹ️ {t(locale, "aboutTitle")}
           </button>
         </div>
       </div>

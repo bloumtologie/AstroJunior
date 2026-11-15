@@ -13,8 +13,12 @@ drapeaux 🇬🇧 et 🇫🇷 ; son libellé accessible reste « Language » ou 
 - Interface React mobile-first, illustrations SVG et styles Tailwind/CSS.
 - Choix d’un plan quotidien avec dix piles d’énergie et quatre postes.
 - Scène visuelle de la base, événements solaires, bilan quotidien et débrief.
+- Page « À propos » regroupant le glossaire, les sources NASA et les limites
+  du modèle.
 - Textes en français et en anglais, lecture vocale optionnelle via Web Speech
   API, et prise en compte de `prefers-reduced-motion`.
+- Page « À propos » regroupant le glossaire, les sources NASA et les limites
+  du modèle.
 - Archive d’événements solaires NASA intégrée au projet : le jeu lit les
   fichiers JSON locaux et n’appelle pas l’API NASA depuis le navigateur.
 

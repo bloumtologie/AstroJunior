@@ -5,6 +5,10 @@ const messages = {
   fr: {
     title: "Mission Outpost",
     archiveLabel: "Archive NASA",
+    aboutTitle: "À propos",
+    aboutIntro:
+      "Le glossaire, les références NASA et les limites de la simulation sont réunis ici.",
+    aboutBack: "Retour",
     language: "Langue",
     french: "Français",
     english: "English",
@@ -202,6 +206,10 @@ const messages = {
   en: {
     title: "Mission Outpost",
     archiveLabel: "NASA archive",
+    aboutTitle: "About",
+    aboutIntro:
+      "The glossary, NASA references, and simulation limitations are collected here.",
+    aboutBack: "Back",
     language: "Language",
     french: "Français",
     english: "English",

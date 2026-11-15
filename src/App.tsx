@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   getUpcomingCMEWarning,
   isAffordable,
@@ -13,17 +13,16 @@ import {
   type EventsArchive,
 } from "./archive";
 import { t, type Locale, type TextKey } from "./i18n";
+import { About } from "./ui/About";
 import { Briefing } from "./ui/Briefing";
 import { Controls } from "./ui/Controls";
 import { Countdown } from "./ui/Countdown";
 import { DayResult } from "./ui/DayResult";
 import { Debrief } from "./ui/Debrief";
 import { Gauges } from "./ui/Gauges";
-import { Glossary } from "./ui/Glossary";
 import { HowToPlay } from "./ui/HowToPlay";
-import { SourcesPanel } from "./ui/SourcesPanel";
 
-type Screen = "briefing" | "help" | "countdown" | "decision" | "result" | "debrief";
+type Screen = "briefing" | "help" | "countdown" | "decision" | "result" | "debrief" | "about";
 type LoadState = "loading" | "ready" | "error";
 type ArchiveLoadError =
   | { key: "archiveHttpError"; params: { file: string; status: number } }
@@ -84,8 +83,7 @@ function App() {
   const [soundEnabled, setSoundEnabled] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(false);
   const [countdown, setCountdown] = useState(3);
-  const [sourcesOpen, setSourcesOpen] = useState(false);
-  const sourcesRef = useRef<HTMLDivElement>(null);
+  const [aboutReturnScreen, setAboutReturnScreen] = useState<Screen>("briefing");
 
   async function loadArchive() {
     setLoadState("loading");
@@ -188,11 +186,6 @@ function App() {
   }, [screen, soundEnabled]);
 
   useEffect(() => {
-    if (!sourcesOpen) return;
-    sourcesRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }, [sourcesOpen]);
-
-  useEffect(() => {
     if (!voiceEnabled || typeof window.speechSynthesis === "undefined") return;
     const copyByScreen: Record<Screen, string> = {
       briefing: t(locale, "homeSlogan"),
@@ -205,6 +198,7 @@ function App() {
       debrief: t(locale, "crewDebrief", {
         crew: crewName.trim() || t(locale, "crewDefault"),
       }),
+      about: t(locale, "aboutTitle"),
     };
     const utterance = new SpeechSynthesisUtterance(copyByScreen[screen]);
     utterance.lang = locale === "fr" ? "fr-FR" : "en-US";
@@ -335,6 +329,11 @@ function App() {
       : loadState === "error"
         ? `${t(locale, "archiveError")} ${archiveError ? t(locale, archiveError.key, archiveError.params) : ""}`
         : undefined;
+  function showAbout() {
+    setAboutReturnScreen(screen);
+    setScreen("about");
+  }
+
   return (
     <div className="min-h-screen bg-night px-3 py-3 font-body text-paper sm:px-6 sm:py-6">
       <div className={`mx-auto max-w-5xl ${screen === "briefing" ? "" : "space-y-5"}`}>
@@ -344,6 +343,16 @@ function App() {
               🚀 {t(locale, "title")}
             </div>
             <div className="flex items-center gap-2">
+              {screen !== "about" && (
+                <button
+                  aria-label={t(locale, "aboutTitle")}
+                  className="secondary-button text-sm"
+                  onClick={showAbout}
+                  type="button"
+                >
+                  ℹ️ <span className="hidden sm:inline">{t(locale, "aboutTitle")}</span>
+                </button>
+              )}
               <label className="sr-only" htmlFor="mission-language">
                 {t(locale, "language")}
               </label>
@@ -386,7 +395,7 @@ function App() {
                 onHowToPlay={() => setScreen("help")}
                 onLocaleChange={setLocale}
                 onRetry={() => void loadArchive()}
-                onShowSources={() => setSourcesOpen(true)}
+                onShowAbout={showAbout}
                 onSoundToggle={() => setSoundEnabled((enabled) => !enabled)}
                 onStart={beginCountdown}
                 onVoiceToggle={() => setVoiceEnabled((enabled) => !enabled)}
@@ -475,34 +484,15 @@ function App() {
                 onReplay={startMission}
               />
             )}
+            {screen === "about" && (
+              <About
+                archiveReady={loadState === "ready"}
+                locale={locale}
+                onBack={() => setScreen(aboutReturnScreen)}
+                sources={sources}
+              />
+            )}
           </div>
-
-          {(screen !== "briefing" || sourcesOpen) && (
-            <div className="grid gap-4 sm:grid-cols-2">
-              {screen !== "briefing" && <Glossary locale={locale} />}
-              <div ref={sourcesRef}>
-                <SourcesPanel
-                  archiveReady={loadState === "ready"}
-                  locale={locale}
-                  open={screen === "briefing" && sourcesOpen}
-                  onOpenChange={(open) => {
-                    if (screen === "briefing") setSourcesOpen(open);
-                  }}
-                  sources={sources}
-                />
-              </div>
-            </div>
-          )}
-          {screen !== "briefing" && (
-            <details className="panel px-5 py-4">
-              <summary className="cursor-pointer font-bold text-paper">
-                {t(locale, "limitTitle")}
-              </summary>
-              <p className="mt-3 text-sm leading-6 text-paper/90">
-                {t(locale, "limits")}
-              </p>
-            </details>
-          )}
         </main>
       </div>
     </div>
