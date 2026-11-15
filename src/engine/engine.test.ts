@@ -81,6 +81,33 @@ describe("mission engine", () => {
     );
   });
 
+  it("treats a DONKI CME start as detection, then applies its default game delay", () => {
+    const cme: GameEvent = {
+      id: "cme-detection",
+      date: "2024-05-01",
+      type: "cme",
+    };
+    const first = step(createInitialState(), balancedDecision, [cme]);
+    const second = step(first.state, balancedDecision, []);
+    const third = step(second.state, balancedDecision, []);
+
+    expect(first.report.radiationMultiplier).toBe(
+      gameBalance.radiation.multipliers.calm,
+    );
+    expect(first.state.pending).toEqual([
+      {
+        eventId: cme.id,
+        arrivalDay: 1 + gameBalance.radiation.defaultCmeDelayDays,
+      },
+    ]);
+    expect(second.report.radiationMultiplier).toBe(
+      gameBalance.radiation.multipliers.calm,
+    );
+    expect(third.report.radiationMultiplier).toBe(
+      gameBalance.radiation.multipliers.cme,
+    );
+  });
+
   it("shows a CME warning before the player makes the protected-day decision", () => {
     const flare: GameEvent = {
       id: "flare-with-cme",
@@ -104,6 +131,26 @@ describe("mission engine", () => {
 
     expect(dayOneWarning).toEqual({ daysAhead: 2, eventIds: [flare.id] });
     expect(dayTwoWarning).toEqual({ daysAhead: 1, eventIds: [flare.id] });
+  });
+
+  it("warns about a DONKI CME using the declared game delay", () => {
+    const cme: GameEvent = {
+      id: "cme-detection",
+      date: "2024-05-01",
+      type: "cme",
+    };
+
+    expect(
+      getUpcomingCMEWarning(
+        [],
+        [cme],
+        1,
+        gameBalance.commsLevels[2].warningDays,
+      ),
+    ).toEqual({
+      daysAhead: gameBalance.radiation.defaultCmeDelayDays,
+      eventIds: [cme.id],
+    });
   });
 
   it("delivers Earth information about the previous day", () => {

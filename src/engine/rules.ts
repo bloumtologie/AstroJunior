@@ -53,6 +53,21 @@ export function getRadiationMultiplier(
   return multipliers.calm;
 }
 
+export function getCMEArrivalDay(
+  event: GameEvent,
+  detectedDay: number,
+): number | null {
+  if (event.type !== "cme" && event.hasCME !== true) return null;
+
+  const delayDays =
+    event.cmeDelayDays ?? gameBalance.radiation.defaultCmeDelayDays;
+  if (!Number.isInteger(delayDays) || delayDays < 1 || delayDays > 3) {
+    throw new RangeError(`Event ${event.id} has an invalid CME arrival delay.`);
+  }
+
+  return detectedDay + delayDays;
+}
+
 export function getUpcomingCMEWarning(
   pending: PendingCME[],
   todayEvents: GameEvent[],
@@ -64,15 +79,12 @@ export function getUpcomingCMEWarning(
       eventId: event.eventId,
       arrivalDay: event.arrivalDay,
     })),
-    ...todayEvents.flatMap((event) =>
-      event.hasCME &&
-      event.cmeDelayDays !== undefined &&
-      Number.isInteger(event.cmeDelayDays) &&
-      event.cmeDelayDays >= 1 &&
-      event.cmeDelayDays <= 3
-        ? [{ eventId: event.id, arrivalDay: currentDay + event.cmeDelayDays }]
-        : [],
-    ),
+    ...todayEvents.flatMap((event) => {
+      const arrivalDay = getCMEArrivalDay(event, currentDay);
+      return arrivalDay === null
+        ? []
+        : [{ eventId: event.id, arrivalDay }];
+    }),
   ];
   const warnedArrivals = arrivals
     .map((event) => ({

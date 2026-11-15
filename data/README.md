@@ -15,7 +15,10 @@ d’archive. La route `FLR` a renvoyé HTTP 404 lors de la vérification, et la 
 publique `DEMO_KEY` a ensuite atteint sa limite HTTP 429. Pour ne pas fabriquer
 d’événements, cette première extraction ne prétend donc pas inclure les
 éruptions FLR. Les événements SEP sont inclus comme événements de particules ;
-les estimations d’arrivée ne sont pas assimilées à une arrivée sur Mars.
+les heures `startTime` des CME sont des heures de détection, pas des arrivées.
+Le jeu applique donc le délai simplifié de deux jours configuré dans
+`src/data/balance.json` ; ce délai est un paramètre de jeu, pas une estimation
+NASA ni une prévision d’arrivée sur Mars.
 
 ## Préparer l’extraction
 

@@ -73,12 +73,14 @@ def normalize_record(record: dict[str, Any], kind: str) -> dict[str, Any]:
         title_fr = "Éjection de masse coronale DONKI"
         title_en = "DONKI coronal mass ejection"
         event_type = "cme"
-    else:
+    elif kind == "SEP":
         event_id = record.get("sepID")
         event_time = record.get("eventTime")
         title_fr = "Événement de particules solaires DONKI"
         title_en = "DONKI solar energetic particle event"
         event_type = "sep"
+    else:
+        raise ValueError(f"Unsupported DONKI event kind: {kind}")
 
     if not isinstance(event_id, str) or not isinstance(event_time, str):
         raise RuntimeError(f"DONKI {kind} record is missing its ID or event time.")
@@ -95,12 +97,19 @@ def normalize_record(record: dict[str, Any], kind: str) -> dict[str, Any]:
         "type": event_type,
         "title_fr": f"{title_fr} · {event_date.isoformat()}",
         "title_en": f"{title_en} · {event_date.isoformat()}",
-        "linkedEvents": [
-            linked.get("activityID")
-            for linked in record.get("linkedEvents", [])
-            if isinstance(linked, dict) and isinstance(linked.get("activityID"), str)
-        ],
     }
+    linked_events = record.get("linkedEvents")
+    if linked_events is not None:
+        if not isinstance(linked_events, list):
+            raise RuntimeError(
+                f"DONKI {kind} record {event_id} has invalid linkedEvents."
+            )
+        event["linkedEvents"] = [
+            linked["activityID"]
+            for linked in linked_events
+            if isinstance(linked, dict)
+            and isinstance(linked.get("activityID"), str)
+        ]
     if kind == "SEP":
         event["hasSEP"] = True
     link = record.get("link")
@@ -160,7 +169,8 @@ def main() -> None:
             "mode": "archive",
             "notes": (
                 "Event records are archived DONKI CME and SEP data. "
-                "Game effects are simplified and do not represent Mars arrival forecasts."
+                "CME arrival timing uses the declared game-balance delay, not a "
+                "NASA Mars-arrival forecast. Other game effects are simplified."
             ),
         },
         "events": events,

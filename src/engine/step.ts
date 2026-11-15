@@ -1,5 +1,6 @@
 import {
   gameBalance,
+  getCMEArrivalDay,
   getEnergyCost,
   getRadiationMultiplier,
   getUpcomingCMEWarning,
@@ -63,22 +64,11 @@ export function step(
   }
 
   for (const event of todayEvents) {
-    if (event.type === "cme") hasCME = true;
-    if (event.hasCME) {
-      if (
-        event.cmeDelayDays === undefined ||
-        !Number.isInteger(event.cmeDelayDays) ||
-        event.cmeDelayDays < 1 ||
-        event.cmeDelayDays > 3
-      ) {
-        throw new RangeError(
-          `Event ${event.id} has an invalid CME arrival delay.`,
-        );
-      }
-
+    const arrivalDay = getCMEArrivalDay(event, day);
+    if (arrivalDay !== null) {
       pending.push({
         eventId: event.id,
-        arrivalDay: day + event.cmeDelayDays,
+        arrivalDay,
         ...(event.donkiUrl ? { donkiUrl: event.donkiUrl } : {}),
       });
     }
