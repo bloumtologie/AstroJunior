@@ -3,23 +3,9 @@
 @tailwind utilities;
 
 :root {
-  font-family:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
-  color: #f8fafc;
-  background-color: #101827;
-  background-image:
-    radial-gradient(1px 1px at 8% 12%, rgb(255 255 255 / 75%) 50%, transparent 100%),
-    radial-gradient(1px 1px at 23% 34%, rgb(255 255 255 / 55%) 50%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 46% 15%, rgb(255 255 255 / 70%) 50%, transparent 100%),
-    radial-gradient(1px 1px at 71% 28%, rgb(255 255 255 / 65%) 50%, transparent 100%),
-    radial-gradient(1px 1px at 87% 9%, rgb(255 255 255 / 75%) 50%, transparent 100%),
-    radial-gradient(1px 1px at 93% 44%, rgb(255 255 255 / 50%) 50%, transparent 100%),
-    radial-gradient(1px 1px at 14% 64%, rgb(255 255 255 / 45%) 50%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 57% 58%, rgb(255 255 255 / 55%) 50%, transparent 100%),
-    radial-gradient(ellipse at 50% 110%, rgb(190 71 42 / 42%), transparent 57%),
-    linear-gradient(180deg, #101827 0%, #172334 54%, #482b32 100%);
-  background-attachment: fixed;
+  font-family: "Nunito", "Avenir Next", ui-rounded, system-ui, sans-serif;
+  color: #fff8f0;
+  background-color: #0b1026;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -27,49 +13,42 @@
 }
 
 body {
-  min-width: 320px;
   min-height: 100vh;
   margin: 0;
 }
 
-@media (max-width: 640px) {
-  :root {
-    background-attachment: scroll;
-  }
-}
-
 @layer components {
   .panel {
-    @apply rounded-2xl border border-slate-700 bg-slate-900/80 shadow-xl shadow-black/10;
+    @apply rounded-bubble border border-white/10 bg-night/90 shadow-soft;
   }
 
   .eyebrow {
-    @apply text-sm font-bold uppercase tracking-[0.18em] text-orange-300;
+    @apply text-sm font-extrabold uppercase tracking-[0.18em] text-sand;
   }
 
   .section-title {
-    @apply text-xl font-extrabold text-white;
+    @apply font-display text-xl font-extrabold text-paper;
   }
 
   .primary-button {
-    @apply rounded-xl bg-orange-300 px-5 py-3 text-base font-bold text-slate-950 transition hover:bg-orange-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-200 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply min-h-12 rounded-2xl bg-sand px-6 py-3 text-base font-extrabold text-night shadow-soft transition duration-300 hover:bg-solar focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-paper disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .secondary-button {
-    @apply rounded-lg border border-slate-500 px-4 py-2 font-semibold text-white hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-200;
+    @apply min-h-12 rounded-2xl border border-white/25 bg-night/80 px-4 py-2 font-bold text-paper hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sand;
   }
 
   .choice-button {
-    @apply min-h-14 rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 text-left text-sm font-bold text-white hover:border-orange-200 disabled:cursor-not-allowed disabled:opacity-40;
+    @apply min-h-12 rounded-2xl border border-white/20 bg-white/5 px-3 py-2 text-left text-sm font-bold text-paper hover:border-sand disabled:cursor-not-allowed disabled:opacity-40;
   }
 
   .choice-button-selected {
-    @apply border-orange-200 bg-orange-200/15 text-orange-100;
+    @apply border-sand bg-sand/15 text-paper ring-2 ring-sand/70;
   }
 }
 
 .gauge-fill {
-  transition: width 550ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: width 300ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .storm-alert {
@@ -91,6 +70,165 @@ body {
   animation: confetti-fall 3.8s ease-in both;
   transform-box: fill-box;
   transform-origin: center;
+}
+
+.home-shell {
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse at 50% 104%, rgb(232 100 60 / 34%), transparent 48%),
+    linear-gradient(180deg, #0b1026 0%, #111a36 64%, #431f31 100%);
+}
+
+.mars-art {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.scene-star {
+  animation: star-twinkle 3s ease-in-out infinite alternate;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.scene-dust {
+  animation: dust-drift 14s linear infinite;
+}
+
+.scene-rover {
+  animation: rover-drive 12s ease-in-out infinite alternate;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.scene-wheel {
+  animation: wheel-roll 3s linear infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.scene-greenhouse {
+  animation: greenhouse-glow 2.8s ease-in-out infinite alternate;
+}
+
+.home-play {
+  animation: play-pulse 2.2s ease-in-out infinite;
+}
+
+.screen-transition {
+  animation: screen-enter 300ms ease-out both;
+}
+
+.countdown-number {
+  animation: countdown-pop 800ms ease-out both;
+}
+
+.battery-token {
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.battery-token[aria-pressed="true"] {
+  outline: 3px solid #fff8f0;
+  outline-offset: 3px;
+}
+
+.mission-landscape {
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 52% 93%, rgb(232 100 60 / 25%), transparent 45%),
+    linear-gradient(180deg, #111a36 0%, #261d39 61%, #5b2a34 100%);
+}
+
+.mission-base-art {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 340px;
+}
+
+.mission-particle {
+  animation: particle-fly 1.6s linear infinite;
+}
+
+.mission-particle:nth-of-type(2n) {
+  animation-delay: 400ms;
+}
+
+.mission-particle:nth-of-type(3n) {
+  animation-delay: 800ms;
+}
+
+.mission-shake {
+  animation: scene-shake 500ms ease-in-out 2;
+  transform-origin: center;
+}
+
+.impact-flash {
+  animation: impact-flash 500ms ease-out 2;
+  pointer-events: none;
+}
+
+@keyframes star-twinkle {
+  from { opacity: 0.35; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1.15); }
+}
+
+@keyframes dust-drift {
+  from { transform: translateX(-8%); opacity: 0.25; }
+  to { transform: translateX(8%); opacity: 0.65; }
+}
+
+@keyframes rover-drive {
+  from { transform: translateX(-10px); }
+  to { transform: translateX(12px); }
+}
+
+@keyframes wheel-roll {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes greenhouse-glow {
+  from { opacity: 0.55; }
+  to { opacity: 1; }
+}
+
+@keyframes play-pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgb(244 178 106 / 26%); }
+  50% { transform: scale(1.025); box-shadow: 0 0 0 12px rgb(244 178 106 / 0%); }
+}
+
+@keyframes screen-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes countdown-pop {
+  from { opacity: 0; transform: scale(0.55); }
+  55% { opacity: 1; transform: scale(1.12); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes particle-fly {
+  from { transform: translateX(0); opacity: 0.15; }
+  45% { opacity: 1; }
+  to { transform: translateX(150px); opacity: 0; }
+}
+
+@keyframes scene-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+@keyframes impact-flash {
+  from { opacity: 0; }
+  35% { opacity: 0.7; }
+  to { opacity: 0; }
 }
 
 @keyframes storm-pulse {
@@ -142,5 +280,23 @@ button:disabled {
 
   .confetti-overlay {
     display: none;
+  }
+
+  .home-play,
+  .scene-star,
+  .scene-dust,
+  .scene-rover,
+  .scene-wheel,
+  .scene-greenhouse,
+  .screen-transition,
+  .countdown-number,
+  .mission-particle,
+  .mission-shake {
+    animation: none !important;
+  }
+
+  .impact-flash {
+    animation: none !important;
+    opacity: 0.2;
   }
 }

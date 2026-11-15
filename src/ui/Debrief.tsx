@@ -19,6 +19,7 @@ type Props = {
   locale: Locale;
   log: DayReport[];
   crewHealth: number;
+  crewName: string;
   nasaReference?: NasaReference;
   onReplay: () => void;
 };
@@ -50,10 +51,14 @@ export function Debrief({
   locale,
   log,
   crewHealth,
+  crewName,
   nasaReference,
   onReplay,
 }: Props) {
   const tradeoff = getTradeoffInsight(log);
+  const earnedStars = crewHealth > 0
+    ? log.some((report) => report.scienceEarned > 0) ? 3 : 2
+    : 0;
   const eventTypeKey: Record<GameEvent["type"], TextKey> = {
     cme: "cmeEvent",
     flare: "flareEvent",
@@ -100,12 +105,33 @@ export function Debrief({
       </svg>
     )}
     <section className="panel p-5 sm:p-7">
-      <h2 className="section-title">{t(locale, "debriefTitle")}</h2>
+      <h2 className="section-title">{t(locale, "crewDebrief", {
+        crew: crewName || t(locale, "crewDefault"),
+      })}</h2>
       <p className="mt-3 text-lg leading-7" role="status">
         {crewHealth > 0
           ? t(locale, "missionSurvived")
           : t(locale, "missionFailed")}
       </p>
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        <span aria-label={t(locale, "crewStars")} className="text-2xl tracking-widest text-solar">
+          {"★".repeat(earnedStars)}{"☆".repeat(3 - earnedStars)}
+        </span>
+        {crewHealth > 0 && (
+          <span className="rounded-full border border-life/60 bg-life/10 px-4 py-2 font-bold text-paper">
+            🏅 {t(locale, "badgeSurvivor")}
+          </span>
+        )}
+        {log.some((report) => report.scienceEarned > 0) && (
+          <span className="rounded-full border border-shield/60 bg-shield/10 px-4 py-2 font-bold text-paper">
+            🔭 {t(locale, "badgeExplorer")}
+          </span>
+        )}
+      </div>
+      <details className="mt-5 rounded-2xl border border-white/15 bg-white/5 px-4 py-3">
+        <summary className="min-h-8 cursor-pointer font-bold text-paper focus-visible:outline focus-visible:outline-2 focus-visible:outline-sand">
+          {t(locale, "details")}
+        </summary>
       <h3 className="mt-7 font-bold">{t(locale, "dayHistory")}</h3>
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
         {charts.map((chart) => (
@@ -171,8 +197,8 @@ export function Debrief({
         </h3>
         <p className="mt-2 leading-7 text-slate-100">
           {t(locale, "marsRadiationSampleText", {
-            location: curiositySurfaceRadiation.location,
-            period: curiositySurfaceRadiation.period,
+            location: t(locale, "marsLocation"),
+            period: t(locale, "marsPeriod"),
             dose: curiositySurfaceRadiation.averageDailyDoseEquivalentMSv.toFixed(2),
           })}
         </p>
@@ -203,6 +229,7 @@ export function Debrief({
           {t(locale, "openRadlabSample")}
         </a>
       </div>
+      </details>
       <button className="primary-button mt-6 w-full" onClick={onReplay} type="button">
         {t(locale, "replay")}
       </button>

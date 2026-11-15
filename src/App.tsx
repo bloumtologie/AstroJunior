@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  getEnergyCost,
   getUpcomingCMEWarning,
   isAffordable,
   gameBalance,
@@ -16,13 +15,15 @@ import {
 import { t, type Locale, type TextKey } from "./i18n";
 import { Briefing } from "./ui/Briefing";
 import { Controls } from "./ui/Controls";
+import { Countdown } from "./ui/Countdown";
 import { DayResult } from "./ui/DayResult";
 import { Debrief } from "./ui/Debrief";
 import { Gauges } from "./ui/Gauges";
 import { Glossary } from "./ui/Glossary";
+import { HowToPlay } from "./ui/HowToPlay";
 import { SourcesPanel } from "./ui/SourcesPanel";
 
-type Screen = "briefing" | "decision" | "result" | "debrief";
+type Screen = "briefing" | "help" | "countdown" | "decision" | "result" | "debrief";
 type LoadState = "loading" | "ready" | "error";
 type ArchiveLoadError =
   | { key: "archiveHttpError"; params: { file: string; status: number } }
@@ -52,6 +53,22 @@ function formatArchiveDate(date: string, locale: Locale): string {
   }).format(new Date(`${date}T00:00:00Z`));
 }
 
+function playCountdownTone() {
+  if (typeof window.AudioContext !== "function") return;
+  const context = new window.AudioContext();
+  const oscillator = context.createOscillator();
+  const gain = context.createGain();
+  oscillator.type = "sine";
+  oscillator.frequency.value = 620;
+  gain.gain.setValueAtTime(0.06, context.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.16);
+  oscillator.connect(gain);
+  gain.connect(context.destination);
+  oscillator.start();
+  oscillator.stop(context.currentTime + 0.16);
+  oscillator.onended = () => void context.close();
+}
+
 function App() {
   const [locale, setLocale] = useState<Locale>("fr");
   const [loadState, setLoadState] = useState<LoadState>("loading");
@@ -63,6 +80,12 @@ function App() {
   const [decision, setDecision] = useState<Decision>(initialDecision);
   const [report, setReport] = useState<DayReport | null>(null);
   const [gameError, setGameError] = useState("");
+  const [crewName, setCrewName] = useState("");
+  const [soundEnabled, setSoundEnabled] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(false);
+  const [countdown, setCountdown] = useState(3);
+  const [sourcesOpen, setSourcesOpen] = useState(false);
+  const sourcesRef = useRef<HTMLDivElement>(null);
 
   async function loadArchive() {
     setLoadState("loading");
@@ -141,6 +164,55 @@ function App() {
     void loadArchive();
   }, []);
 
+  useEffect(() => {
+    if (screen !== "countdown") return;
+    setCountdown(3);
+    let remaining = 3;
+    let finishTimer: number | undefined;
+    const timer = window.setInterval(() => {
+      remaining -= 1;
+      if (remaining > 0) {
+        setCountdown(remaining);
+        if (soundEnabled) playCountdownTone();
+        return;
+      }
+      setCountdown(0);
+      if (soundEnabled) playCountdownTone();
+      window.clearInterval(timer);
+      finishTimer = window.setTimeout(startMission, 750);
+    }, 850);
+    return () => {
+      window.clearInterval(timer);
+      if (finishTimer !== undefined) window.clearTimeout(finishTimer);
+    };
+  }, [screen, soundEnabled]);
+
+  useEffect(() => {
+    if (!sourcesOpen) return;
+    sourcesRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, [sourcesOpen]);
+
+  useEffect(() => {
+    if (!voiceEnabled || typeof window.speechSynthesis === "undefined") return;
+    const copyByScreen: Record<Screen, string> = {
+      briefing: t(locale, "homeSlogan"),
+      help: t(locale, "helpTitle"),
+      countdown: countdown > 0
+        ? `${t(locale, "countdownLabel")} ${countdown}`
+        : t(locale, "countdownGo"),
+      decision: t(locale, "choosePlan"),
+      result: report ? t(locale, "dailyReport", { day: report.day }) : "",
+      debrief: t(locale, "crewDebrief", {
+        crew: crewName.trim() || t(locale, "crewDefault"),
+      }),
+    };
+    const utterance = new SpeechSynthesisUtterance(copyByScreen[screen]);
+    utterance.lang = locale === "fr" ? "fr-FR" : "en-US";
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+    return () => window.speechSynthesis.cancel();
+  }, [countdown, crewName, locale, report, screen, voiceEnabled]);
+
   const eventTitles = useMemo(
     () =>
       Object.fromEntries(
@@ -218,6 +290,11 @@ function App() {
     setScreen("decision");
   }
 
+  function beginCountdown() {
+    setCountdown(3);
+    setScreen("countdown");
+  }
+
   function confirmDay() {
     try {
       if (!isAffordable(decision)) {
@@ -252,145 +329,180 @@ function App() {
     gameState.day,
     comms.warningDays,
   );
-  const visibleEnergyRemaining =
-    screen === "result" && report
-      ? report.energyRemaining
-      : screen === "debrief"
-        ? gameState.log[gameState.log.length - 1]?.energyRemaining ??
-          gameBalance.dailyEnergyBudget
-        : gameBalance.dailyEnergyBudget - getEnergyCost(decision);
   const missionDisabledReason =
     loadState === "loading"
       ? t(locale, "loading")
       : loadState === "error"
         ? `${t(locale, "archiveError")} ${archiveError ? t(locale, archiveError.key, archiveError.params) : ""}`
         : undefined;
-  const archiveErrorMessage = archiveError
-    ? t(locale, archiveError.key, archiveError.params)
-    : "";
-
   return (
-    <div className="min-h-screen px-4 py-5 sm:px-7 sm:py-8">
-      <div className="mx-auto max-w-5xl">
-        <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p className="eyebrow">{t(locale, "archiveLabel")}</p>
-            <p className="mt-1 text-xl font-extrabold">{t(locale, "title")}</p>
-          </div>
-          <label className="flex items-center gap-3 text-sm font-semibold">
-            <span>{t(locale, "language")}</span>
-            <select
-              className="rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 text-white"
-              onChange={(event) => setLocale(event.target.value as Locale)}
-              value={locale}
-            >
-              <option value="fr">{t(locale, "french")}</option>
-              <option value="en">{t(locale, "english")}</option>
-            </select>
-          </label>
-        </header>
-
-        {loadState === "error" && screen === "briefing" && (
-          <div className="panel mb-6 border-amber-300/40 p-5" role="alert">
-            <h2 className="font-bold text-amber-100">{t(locale, "archiveErrorTitle")}</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-200">
-              {t(locale, "archiveError")} {archiveErrorMessage}
-            </p>
-            <button className="secondary-button mt-4" onClick={() => void loadArchive()} type="button">
-              {t(locale, "tryAgain")}
-            </button>
-          </div>
+    <div className="min-h-screen bg-night px-3 py-3 font-body text-paper sm:px-6 sm:py-6">
+      <div className={`mx-auto max-w-5xl ${screen === "briefing" ? "" : "space-y-5"}`}>
+        {screen !== "briefing" && (
+          <header className="flex flex-wrap items-center justify-between gap-3">
+            <div className="font-display text-lg font-extrabold text-paper sm:text-2xl">
+              🚀 {t(locale, "title")}
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="sr-only" htmlFor="mission-language">
+                {t(locale, "language")}
+              </label>
+              <select
+                className="min-h-12 rounded-2xl border border-white/20 bg-night px-3 font-bold text-paper"
+                id="mission-language"
+                onChange={(event) => setLocale(event.target.value as Locale)}
+                value={locale}
+              >
+                <option value="fr">{t(locale, "french")}</option>
+                <option value="en">{t(locale, "english")}</option>
+              </select>
+              <button
+                aria-label={t(locale, "homeBack")}
+                className="secondary-button text-sm"
+                onClick={() => setScreen("briefing")}
+                type="button"
+              >
+                🏠
+              </button>
+            </div>
+          </header>
         )}
 
         {gameError && (
-          <p className="mb-5 rounded-lg border border-red-300/40 bg-red-300/10 p-4 text-red-100" role="alert">
+          <p className="rounded-2xl border border-red-300/60 bg-night px-4 py-3 text-paper" role="alert">
             {gameError}
           </p>
         )}
 
-        <main className="space-y-6">
-          {screen !== "briefing" && (
-            <p className="panel px-5 py-3 text-right font-bold text-orange-100" aria-live="polite">
-              {t(locale, "energyRemaining")}: {visibleEnergyRemaining}{" "}
-              {t(locale, "energy")}
-            </p>
-          )}
-          {screen === "briefing" && (
-            <Briefing
-              disabledReason={missionDisabledReason}
-              locale={locale}
-              onStart={startMission}
-              scenarioRange={scenarioRange}
-            />
-          )}
-          {screen === "decision" && (
-            <>
-              <div>
-                <p className="eyebrow">
-                  {t(locale, "day", {
-                    day: currentDay,
-                    total: gameBalance.durationDays,
-                  })}
-                </p>
-                {currentScenarioDate && (
-                  <p className="mt-1 text-sm text-slate-300">
-                    {t(locale, "archiveDate", {
-                      date: formatArchiveDate(currentScenarioDate, locale),
+        <main className="space-y-5">
+          <div className="screen-transition" key={screen}>
+            {screen === "briefing" && (
+              <Briefing
+                canRetry={loadState === "error"}
+                crewName={crewName}
+                disabledReason={missionDisabledReason}
+                locale={locale}
+                onCrewNameChange={setCrewName}
+                onHowToPlay={() => setScreen("help")}
+                onLocaleChange={setLocale}
+                onRetry={() => void loadArchive()}
+                onShowSources={() => setSourcesOpen(true)}
+                onSoundToggle={() => setSoundEnabled((enabled) => !enabled)}
+                onStart={beginCountdown}
+                onVoiceToggle={() => setVoiceEnabled((enabled) => !enabled)}
+                scenarioRange={scenarioRange}
+                soundEnabled={soundEnabled}
+                voiceEnabled={voiceEnabled}
+              />
+            )}
+            {screen === "help" && (
+              <HowToPlay
+                locale={locale}
+                onBack={() => setScreen("briefing")}
+                onStart={beginCountdown}
+              />
+            )}
+            {screen === "countdown" && (
+              <Countdown count={countdown} locale={locale} />
+            )}
+            {screen === "decision" && (
+              <>
+                <div className="flex items-center justify-between gap-3">
+                  <p className="eyebrow">
+                    {t(locale, "day", {
+                      day: currentDay,
+                      total: gameBalance.durationDays,
                     })}
                   </p>
-                )}
-              </div>
-              <div className="grid gap-6 lg:grid-cols-[1.4fr_0.8fr]">
-                <Controls
-                  cmeWarning={decisionCMEWarning}
-                  decision={decision}
+                  {currentScenarioDate && (
+                    <p className="rounded-full border border-white/20 bg-white/5 px-3 py-2 text-xs font-bold text-paper sm:text-sm">
+                      {t(locale, "archiveDate", {
+                        date: formatArchiveDate(currentScenarioDate, locale),
+                      })}
+                    </p>
+                  )}
+                </div>
+                <div className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
+                  <Controls
+                    cmeWarning={decisionCMEWarning}
+                    decision={decision}
+                    locale={locale}
+                    onChange={setDecision}
+                    onConfirm={confirmDay}
+                  />
+                  <Gauges
+                    crewName={crewName}
+                    decision={decision}
+                    locale={locale}
+                    state={gameState}
+                    storm={Boolean(decisionCMEWarning)}
+                  />
+                </div>
+              </>
+            )}
+            {screen === "result" && report && (
+              <div className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
+                <DayResult
+                  archiveDate={
+                    reportArchiveDate
+                      ? formatArchiveDate(reportArchiveDate, locale)
+                      : undefined
+                  }
+                  eventTitles={eventTitles}
                   locale={locale}
-                  onChange={setDecision}
-                  onConfirm={confirmDay}
+                  onContinue={continueMission}
+                  report={report}
                 />
-                <Gauges locale={locale} state={gameState} />
+                <Gauges
+                  crewName={crewName}
+                  decision={report.decision}
+                  locale={locale}
+                  state={gameState}
+                  storm={
+                    Boolean(report.cmeWarning) ||
+                    report.messageKeys.includes("radiation.alert")
+                  }
+                />
               </div>
-            </>
-          )}
-          {screen === "result" && report && (
-            <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-              <DayResult
-                archiveDate={
-                  reportArchiveDate
-                    ? formatArchiveDate(reportArchiveDate, locale)
-                    : undefined
-                }
-                eventTitles={eventTitles}
+            )}
+            {screen === "debrief" && (
+              <Debrief
+                crewHealth={gameState.crewHealth}
+                crewName={crewName.trim() || t(locale, "crewDefault")}
+                log={gameState.log}
                 locale={locale}
-                onContinue={continueMission}
-                report={report}
+                nasaReference={nasaReference}
+                onReplay={startMission}
               />
-              <Gauges locale={locale} state={gameState} />
+            )}
+          </div>
+
+          {(screen !== "briefing" || sourcesOpen) && (
+            <div className="grid gap-4 sm:grid-cols-2">
+              {screen !== "briefing" && <Glossary locale={locale} />}
+              <div ref={sourcesRef}>
+                <SourcesPanel
+                  archiveReady={loadState === "ready"}
+                  locale={locale}
+                  open={screen === "briefing" && sourcesOpen}
+                  onOpenChange={(open) => {
+                    if (screen === "briefing") setSourcesOpen(open);
+                  }}
+                  sources={sources}
+                />
+              </div>
             </div>
           )}
-          {screen === "debrief" && (
-            <Debrief
-              crewHealth={gameState.crewHealth}
-              log={gameState.log}
-              locale={locale}
-              nasaReference={nasaReference}
-              onReplay={startMission}
-            />
+          {screen !== "briefing" && (
+            <details className="panel px-5 py-4">
+              <summary className="cursor-pointer font-bold text-paper">
+                {t(locale, "limitTitle")}
+              </summary>
+              <p className="mt-3 text-sm leading-6 text-paper/90">
+                {t(locale, "limits")}
+              </p>
+            </details>
           )}
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Glossary locale={locale} />
-            <SourcesPanel
-              archiveReady={loadState === "ready"}
-              locale={locale}
-              sources={sources}
-            />
-          </div>
-          <section className="panel border-slate-700 p-5">
-            <h2 className="font-bold">{t(locale, "limitTitle")}</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-300">
-              {t(locale, "limits")}
-            </p>
-          </section>
         </main>
       </div>
     </div>

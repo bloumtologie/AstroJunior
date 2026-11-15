@@ -6,11 +6,23 @@ type Props = {
   locale: Locale;
   sources: SourceEntry[];
   archiveReady: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 };
 
-export function SourcesPanel({ locale, sources, archiveReady }: Props) {
+export function SourcesPanel({
+  locale,
+  sources,
+  archiveReady,
+  open = false,
+  onOpenChange,
+}: Props) {
   return (
-    <details className="panel p-5">
+    <details
+      className="panel p-5"
+      onToggle={(event) => onOpenChange?.(event.currentTarget.open)}
+      open={open}
+    >
       <summary className="cursor-pointer text-lg font-bold">
         {t(locale, "sources")} ·{" "}
         {t(locale, archiveReady ? "archiveMode" : "archiveNotLoaded")}

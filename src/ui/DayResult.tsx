@@ -30,6 +30,10 @@ export function DayResult({
           {t(locale, "archiveDate", { date: archiveDate })}
         </p>
       )}
+      <details className="mt-4 rounded-2xl border border-white/15 bg-white/5 px-4 py-3">
+        <summary className="min-h-8 cursor-pointer font-bold text-paper focus-visible:outline focus-visible:outline-2 focus-visible:outline-sand">
+          {t(locale, "details")}
+        </summary>
       <p className="mt-4 leading-7 text-slate-200">
         {t(locale, "decisionSummary", {
           life: t(locale, lifeNames[report.decision.life]),
@@ -115,6 +119,7 @@ export function DayResult({
           </ul>
         )}
       </div>
+      </details>
       <button className="primary-button mt-6 w-full" onClick={onContinue} type="button">
         {t(locale, "nextDay")}
       </button>
