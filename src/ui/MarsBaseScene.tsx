@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { gameBalance, getEnergyCost } from "../engine/rules";
 import type { Decision, State } from "../engine/types";
 import type { Locale } from "../i18n";
@@ -34,6 +35,20 @@ function astronautFace(health: number, index: number) {
 }
 
 export function MarsBaseScene({ locale, state, decision, crewName, storm }: Props) {
+  const [reducedMotion, setReducedMotion] = useState(
+    () =>
+      typeof window !== "undefined" &&
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  );
+  useEffect(() => {
+    if (typeof window.matchMedia !== "function") return;
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updatePreference = () => setReducedMotion(preference.matches);
+    preference.addEventListener("change", updatePreference);
+    return () => preference.removeEventListener("change", updatePreference);
+  }, []);
+
   const health = Math.max(0, Math.min(100, state.crewHealth));
   const oxygen = Math.max(0, Math.min(60, state.oxygen));
   const food = Math.max(0, Math.min(60, state.food));
@@ -43,8 +58,15 @@ export function MarsBaseScene({ locale, state, decision, crewName, storm }: Prop
   );
   const geigerAngle = Math.min(65, Math.max(-65, state.cumulativeDose * 6.5));
   const plantHeight = 8 + (food / 60) * 28;
+  const plantsWilted = food < 15;
   const shieldActive = decision.shield > 0;
   const shieldStrong = decision.shield >= 2;
+  const solarParticles = [
+    { x: 25, y: 76, impactX: 202, impactY: 126, delay: "0s" },
+    { x: 42, y: 116, impactX: 193, impactY: 174, delay: "350ms" },
+    { x: 29, y: 155, impactX: 193, impactY: 208, delay: "700ms" },
+    { x: 46, y: 190, impactX: 203, impactY: 238, delay: "1050ms" },
+  ];
   const detailValues = [
     `${t(locale, "visualCrew")}: ${Math.ceil(health / 25)}/4`,
     `${t(locale, "oxygen")}: ${state.oxygen} u`,
@@ -93,13 +115,58 @@ export function MarsBaseScene({ locale, state, decision, crewName, storm }: Prop
           <path d="M0 260q150-24 295 8t250-2 255-2v66H0z" fill="#9d443e" opacity=".55" />
           {storm && (
             <g stroke="#ffd23f" strokeWidth="3">
-              <circle cx="42" cy="50" fill="#ffd23f" r="13" stroke="none" />
-              <path d="M42 25v-9m0 68v-9M17 50H8m68 0h-9M24 32l-7-7m50 50-7-7m0-36 7-7m-50 50-7-7" />
-              <path className="mission-particle" d="M15 75h120" />
-              <path className="mission-particle" d="M30 112h150" />
-              <path className="mission-particle" d="M8 152h170" />
-              <path className="mission-particle" d="M18 190h120" />
-              <path d="M44 48l-8 16h10l-6 14 19-21H48l8-9z" fill="#ffd23f" stroke="none" />
+              <g className="solar-eruption">
+                <circle cx="42" cy="50" fill="#ffd23f" r="13" stroke="none" />
+                <path d="M42 25v-9m0 68v-9M17 50H8m68 0h-9M24 32l-7-7m50 50-7-7m0-36 7-7m-50 50-7-7" />
+                <path d="M44 48l-8 16h10l-6 14 19-21H48l8-9z" fill="#ffd23f" stroke="none" />
+              </g>
+              {solarParticles.map((particle, index) => {
+                const path = shieldStrong
+                  ? `M ${particle.x} ${particle.y} L ${particle.impactX} ${particle.impactY} Q ${particle.impactX - 8} ${particle.impactY - 15} ${particle.impactX - 72} ${particle.impactY - 24}`
+                  : `M ${particle.x} ${particle.y} L 820 ${particle.y + 90}`;
+                return (
+                  <g key={`${particle.x}-${particle.y}`}>
+                    {reducedMotion ? (
+                      <circle
+                        cx={particle.x}
+                        cy={particle.y}
+                        fill="#ffd23f"
+                        r={index % 2 === 0 ? 4 : 3}
+                        stroke="#fff8f0"
+                        strokeWidth="1.5"
+                      />
+                    ) : (
+                      <circle
+                        cx="0"
+                        cy="0"
+                        fill="#ffd23f"
+                        r={index % 2 === 0 ? 4 : 3}
+                        stroke="#fff8f0"
+                        strokeWidth="1.5"
+                      >
+                        <animateMotion
+                          begin={particle.delay}
+                          dur="1.8s"
+                          path={path}
+                          repeatCount="indefinite"
+                        />
+                      </circle>
+                    )}
+                    {shieldStrong && (
+                      <circle
+                        className="shield-bounce-flash"
+                        cx={particle.impactX}
+                        cy={particle.impactY}
+                        fill="none"
+                        r="9"
+                        style={{ animationDelay: particle.delay }}
+                        stroke="#fff8f0"
+                        strokeWidth="3"
+                      />
+                    )}
+                  </g>
+                );
+              })}
             </g>
           )}
           {shieldActive && (
@@ -132,11 +199,11 @@ export function MarsBaseScene({ locale, state, decision, crewName, storm }: Prop
               {food > 0 && (
                 <ellipse
                   cx={x + (index % 2 === 0 ? -5 : 5)}
-                  cy={255 - plantHeight + 8}
-                  fill="#5bd99a"
+                  cy={255 - plantHeight + (plantsWilted ? 3 : 8)}
+                  fill={plantsWilted ? "#f4b26a" : "#5bd99a"}
                   rx="6"
                   ry="3"
-                  transform={`rotate(${index % 2 === 0 ? -25 : 25} ${x} ${255 - plantHeight + 8})`}
+                  transform={`rotate(${plantsWilted ? 75 : index % 2 === 0 ? -25 : 25} ${x} ${255 - plantHeight + (plantsWilted ? 3 : 8)})`}
                 />
               )}
             </g>
@@ -182,7 +249,14 @@ export function MarsBaseScene({ locale, state, decision, crewName, storm }: Prop
             })}
           </g>
           {storm && !shieldStrong && (
-            <circle className="impact-flash" cx="420" cy="184" fill="#ffd23f" opacity=".55" r="40" />
+            <circle
+              className="impact-flash"
+              cx="273"
+              cy="210"
+              fill="#ffd23f"
+              opacity=".55"
+              r="40"
+            />
           )}
         </svg>
         <div className="absolute left-3 top-3 rounded-full border border-white/30 bg-night/85 px-3 py-1 text-xs font-extrabold text-paper sm:left-5 sm:top-4 sm:text-sm">

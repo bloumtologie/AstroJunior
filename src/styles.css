@@ -151,16 +151,10 @@ body {
   max-height: 340px;
 }
 
-.mission-particle {
-  animation: particle-fly 1.6s linear infinite;
-}
-
-.mission-particle:nth-of-type(2n) {
-  animation-delay: 400ms;
-}
-
-.mission-particle:nth-of-type(3n) {
-  animation-delay: 800ms;
+.solar-eruption {
+  animation: solar-eruption 900ms ease-in-out infinite alternate;
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
 .mission-shake {
@@ -169,7 +163,15 @@ body {
 }
 
 .impact-flash {
-  animation: impact-flash 500ms ease-out 2;
+  animation: impact-flash 1.8s ease-out infinite;
+  animation-delay: 450ms;
+  pointer-events: none;
+}
+
+.shield-bounce-flash {
+  animation: shield-bounce-flash 1.8s ease-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
   pointer-events: none;
 }
 
@@ -213,10 +215,9 @@ body {
   to { opacity: 1; transform: scale(1); }
 }
 
-@keyframes particle-fly {
-  from { transform: translateX(0); opacity: 0.15; }
-  45% { opacity: 1; }
-  to { transform: translateX(150px); opacity: 0; }
+@keyframes solar-eruption {
+  from { opacity: 0.7; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1.15); }
 }
 
 @keyframes scene-shake {
@@ -226,9 +227,13 @@ body {
 }
 
 @keyframes impact-flash {
-  from { opacity: 0; }
-  35% { opacity: 0.7; }
-  to { opacity: 0; }
+  0%, 20%, 100% { opacity: 0; }
+  8% { opacity: 0.7; }
+}
+
+@keyframes shield-bounce-flash {
+  0%, 55%, 100% { opacity: 0; transform: scale(0.5); }
+  45% { opacity: 0.9; transform: scale(1.4); }
 }
 
 @keyframes storm-pulse {
@@ -290,12 +295,17 @@ button:disabled {
   .scene-greenhouse,
   .screen-transition,
   .countdown-number,
-  .mission-particle,
+  .solar-eruption,
   .mission-shake {
     animation: none !important;
   }
 
   .impact-flash {
+    animation: none !important;
+    opacity: 0.2;
+  }
+
+  .shield-bounce-flash {
     animation: none !important;
     opacity: 0.2;
   }
