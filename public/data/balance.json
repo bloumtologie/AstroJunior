@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "source": "Mission Outpost game settings",
+    "retrieved": "2026-11-14",
+    "mode": "archive",
+    "notes": "All values in this file are game-balance parameters, not NASA measurements."
+  },
+  "durationDays": 7,
+  "dailyEnergyBudget": 100,
+  "crewSize": 4,
+  "startingResources": {
+    "oxygen": 40,
+    "food": 40,
+    "crewHealth": 100
+  },
+  "dailyConsumption": {
+    "oxygen": 10,
+    "food": 10
+  },
+  "lifeLevels": [
+    { "level": 0, "name": "low", "energyCost": 20, "oxygenProduced": 6, "foodProduced": 6 },
+    { "level": 1, "name": "medium", "energyCost": 35, "oxygenProduced": 10, "foodProduced": 10 },
+    { "level": 2, "name": "high", "energyCost": 50, "oxygenProduced": 14, "foodProduced": 14 }
+  ],
+  "shieldLevels": [
+    { "level": 0, "name": "none", "energyCost": 0, "doseReduction": 0 },
+    { "level": 1, "name": "light", "energyCost": 10, "doseReduction": 0.4 },
+    { "level": 2, "name": "strong", "energyCost": 20, "doseReduction": 0.7 },
+    { "level": 3, "name": "max", "energyCost": 35, "doseReduction": 0.9 }
+  ],
+  "commsLevels": [
+    { "level": 0, "name": "low", "energyCost": 5, "warningDays": 0, "earthAdvice": false },
+    { "level": 1, "name": "medium", "energyCost": 10, "warningDays": 1, "earthAdvice": true },
+    { "level": 2, "name": "high", "energyCost": 20, "warningDays": 2, "earthAdvice": true }
+  ],
+  "scienceLevels": [
+    { "level": 0, "name": "none", "energyCost": 0, "researchPoints": 0 },
+    { "level": 1, "name": "medium", "energyCost": 10, "researchPoints": 1 },
+    { "level": 2, "name": "high", "energyCost": 25, "researchPoints": 3 }
+  ],
+  "radiation": {
+    "baselineDose": 0.5,
+    "safeThreshold": 0.5,
+    "healthPerMSv": 10,
+    "defaultCmeDelayDays": 2,
+    "multipliers": {
+      "calm": 1,
+      "flare": 1.5,
+      "cme": 3,
+      "sep": 6,
+      "cmeAndSep": 12
+    }
+  },
+  "healthLossPerDayWithoutOxygenOrFood": 20
+}

@@ -1,0 +1,42 @@
+{
+  "meta": {
+    "source": "NASA DONKI and NASA Open APIs",
+    "retrieved": "2026-11-15",
+    "mode": "archive",
+    "notes": "DONKI events are archived; reference entries support educational context and are not mission data."
+  },
+  "sources": [
+    {
+      "id": "donki",
+      "name": "NASA DONKI",
+      "url": "https://ccmc.gsfc.nasa.gov/tools/DONKI/",
+      "usedFor_fr": "Catalogue NASA des événements de météorologie spatiale.",
+      "usedFor_en": "NASA catalog of space weather events.",
+      "mode": "archive"
+    },
+    {
+      "id": "nasa-open-api",
+      "name": "NASA Open APIs",
+      "url": "https://api.nasa.gov/",
+      "usedFor_fr": "Récupération des événements DONKI CME et SEP archivés.",
+      "usedFor_en": "Retrieval of archived DONKI CME and SEP events.",
+      "mode": "archive"
+    },
+    {
+      "id": "radlab-iss-sample",
+      "name": "NASA OSDR RadLab — échantillon ISS DosTel2",
+      "url": "https://visualization.osdr.nasa.gov/radlab/api/?spacecraft=ISS&instrument=DosTel&timestamp%3E=2022-04-01T23%3A00&timestamp%3C2022-04-02T01%3A05&absorbed_dose_rate%3E2&flux&latitude&longitude&altitude&b&l&format=html",
+      "usedFor_fr": "Mesure ponctuelle de débit de dose absorbée (10,216 µGy/heure) par DosTel2 sur l’ISS le 1er avril 2022 à 23:00. Ce n’est ni une moyenne ni une mesure sur Mars.",
+      "usedFor_en": "Single absorbed dose-rate sample (10.216 µGy/hour) from ISS instrument DosTel2 on 2022-04-01 at 23:00. It is neither an average nor a Mars measurement.",
+      "mode": "reference"
+    },
+    {
+      "id": "curiosity-rad-study",
+      "name": "NASA — résultats de Curiosity sur la radiation de surface",
+      "url": "https://www.nasa.gov/news-release/nasa-rover-results-include-first-age-measurement-on-mars-and-help-for-human-exploration/",
+      "usedFor_fr": "NASA rapporte une moyenne de 0,67 mSv par jour à Gale Crater entre août 2012 et juin 2013, mesurée par RAD. Il s’agit d’une référence historique, pas de la dose du jeu.",
+      "usedFor_en": "NASA reports an average of 0.67 mSv per day at Gale Crater from August 2012 to June 2013, measured by RAD. This is a historical reference, not the game's dose.",
+      "mode": "reference"
+    }
+  ]
+}
