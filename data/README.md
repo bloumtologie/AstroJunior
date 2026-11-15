@@ -35,6 +35,7 @@ les estimations d’arrivée ne sont pas assimilées à une arrivée sur Mars.
 
 Le navigateur ne fait aucun appel à l’API ; il lit uniquement le JSON archivé.
 Chaque fichier de données embarqué porte ses métadonnées `mode: "archive"`.
-Les coûts, stocks et facteurs de santé de `balance.json` sont des paramètres
-de jeu et non des mesures NASA. La dose de base de 0,5 mSv/jour n’est pas une
-mesure de surface martienne.
+Les coûts, stocks et facteurs de santé de `src/data/balance.json` sont des
+paramètres de jeu et non des mesures NASA. Les scripts `predev` et `prebuild`
+copient ce fichier canonique vers `public/data/balance.json`. La dose de base
+de 0,5 mSv/jour n’est pas une mesure de surface martienne.

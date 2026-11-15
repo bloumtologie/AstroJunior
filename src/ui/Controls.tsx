@@ -1,5 +1,5 @@
 import { gameBalance, getEnergyCost, isAffordable } from "../engine/rules";
-import type { Decision } from "../engine/types";
+import type { CMEWarning, Decision } from "../engine/types";
 import type { Locale, TextKey } from "../i18n";
 import { t } from "../i18n";
 
@@ -66,11 +66,18 @@ const choices: Choice[] = [
 type Props = {
   locale: Locale;
   decision: Decision;
+  cmeWarning: CMEWarning | null;
   onChange: (decision: Decision) => void;
   onConfirm: () => void;
 };
 
-export function Controls({ locale, decision, onChange, onConfirm }: Props) {
+export function Controls({
+  locale,
+  decision,
+  cmeWarning,
+  onChange,
+  onConfirm,
+}: Props) {
   const energyUsed = getEnergyCost(decision);
   const energyRemaining = gameBalance.dailyEnergyBudget - energyUsed;
   const lifeProduction = gameBalance.lifeLevels[decision.life];
@@ -154,6 +161,14 @@ export function Controls({ locale, decision, onChange, onConfirm }: Props) {
         </p>
         {comms.earthAdvice && <p>{t(locale, "advicePreview")}</p>}
       </div>
+      {cmeWarning && (
+        <p
+          className="mt-4 rounded-lg border border-amber-300/50 bg-amber-300/10 p-4 text-amber-100"
+          role="alert"
+        >
+          {t(locale, "cmeWarning", { days: cmeWarning.daysAhead })}
+        </p>
+      )}
       <button className="primary-button mt-6 w-full" onClick={onConfirm} type="button">
         {t(locale, "validatePlan")}
       </button>

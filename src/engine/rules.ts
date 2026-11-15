@@ -1,5 +1,10 @@
 import balance from "../data/balance.json";
-import type { Decision } from "./types";
+import type {
+  CMEWarning,
+  Decision,
+  GameEvent,
+  PendingCME,
+} from "./types";
 
 export const gameBalance = balance;
 
@@ -46,4 +51,45 @@ export function getRadiationMultiplier(
   if (hasCME) return multipliers.cme;
   if (hasFlare) return multipliers.flare;
   return multipliers.calm;
+}
+
+export function getUpcomingCMEWarning(
+  pending: PendingCME[],
+  todayEvents: GameEvent[],
+  currentDay: number,
+  warningDays: number,
+): CMEWarning | null {
+  const arrivals = [
+    ...pending.map((event) => ({
+      eventId: event.eventId,
+      arrivalDay: event.arrivalDay,
+    })),
+    ...todayEvents.flatMap((event) =>
+      event.hasCME &&
+      event.cmeDelayDays !== undefined &&
+      Number.isInteger(event.cmeDelayDays) &&
+      event.cmeDelayDays >= 1 &&
+      event.cmeDelayDays <= 3
+        ? [{ eventId: event.id, arrivalDay: currentDay + event.cmeDelayDays }]
+        : [],
+    ),
+  ];
+  const warnedArrivals = arrivals
+    .map((event) => ({
+      eventId: event.eventId,
+      daysAhead: event.arrivalDay - currentDay,
+    }))
+    .filter(
+      (event) => event.daysAhead > 0 && event.daysAhead <= warningDays,
+    );
+
+  if (warnedArrivals.length === 0) return null;
+
+  const daysAhead = Math.min(...warnedArrivals.map((event) => event.daysAhead));
+  return {
+    daysAhead,
+    eventIds: warnedArrivals
+      .filter((event) => event.daysAhead === daysAhead)
+      .map((event) => event.eventId),
+  };
 }

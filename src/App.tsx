@@ -1,5 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { getEnergyCost, isAffordable, gameBalance } from "./engine/rules";
+import {
+  getEnergyCost,
+  getUpcomingCMEWarning,
+  isAffordable,
+  gameBalance,
+} from "./engine/rules";
 import { createInitialState, step } from "./engine/step";
 import type { Decision, DayReport, State } from "./engine/types";
 import {
@@ -158,6 +163,13 @@ function App() {
   }
 
   const currentDay = Math.min(gameState.day, gameBalance.durationDays);
+  const comms = gameBalance.commsLevels[decision.comms];
+  const decisionCMEWarning = getUpcomingCMEWarning(
+    gameState.pending,
+    dayEvents,
+    gameState.day,
+    comms.warningDays,
+  );
   const visibleEnergyRemaining =
     screen === "result" && report
       ? report.energyRemaining
@@ -235,6 +247,7 @@ function App() {
               </p>
               <div className="grid gap-6 lg:grid-cols-[1.4fr_0.8fr]">
                 <Controls
+                  cmeWarning={decisionCMEWarning}
                   decision={decision}
                   locale={locale}
                   onChange={setDecision}

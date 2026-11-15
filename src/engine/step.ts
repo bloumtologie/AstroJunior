@@ -2,6 +2,7 @@ import {
   gameBalance,
   getEnergyCost,
   getRadiationMultiplier,
+  getUpcomingCMEWarning,
   isAffordable,
 } from "./rules";
 import type {
@@ -139,10 +140,12 @@ export function step(
           eventIds: previousReport.eventRefs.map((event) => event.id),
         }
       : null;
-  const warningDaysAhead = pending
-    .map((event) => event.arrivalDay - day)
-    .filter((days) => days > 0 && days <= comms.warningDays)
-    .sort((a, b) => a - b)[0];
+  const cmeWarning = getUpcomingCMEWarning(
+    pending,
+    [],
+    day,
+    comms.warningDays,
+  );
 
   const report: DayReport = {
     day,
@@ -159,18 +162,7 @@ export function step(
     scienceEarned,
     decision: { ...decision },
     eventRefs,
-    cmeWarning:
-      warningDaysAhead === undefined
-        ? null
-        : {
-            daysAhead: warningDaysAhead,
-            eventIds: pending
-              .filter(
-                (event) =>
-                  event.arrivalDay - day === warningDaysAhead,
-              )
-              .map((event) => event.eventId),
-          },
+    cmeWarning,
     earthAdvice,
     messageKeys: [
       ...(multiplier > 1 ? (["radiation.alert"] as const) : []),

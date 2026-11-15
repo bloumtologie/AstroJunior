@@ -40,6 +40,11 @@ export type EarthAdvice = {
   eventIds: string[];
 };
 
+export type CMEWarning = {
+  daysAhead: number;
+  eventIds: string[];
+};
+
 export type DayReport = {
   day: number;
   energyUsed: number;
@@ -55,7 +60,7 @@ export type DayReport = {
   scienceEarned: number;
   decision: Decision;
   eventRefs: EventReference[];
-  cmeWarning: { daysAhead: number; eventIds: string[] } | null;
+  cmeWarning: CMEWarning | null;
   earthAdvice: EarthAdvice | null;
   messageKeys: Array<"radiation.alert" | "resources.shortage">;
 };

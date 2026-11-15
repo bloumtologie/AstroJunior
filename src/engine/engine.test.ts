@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { gameBalance, isAffordable } from "./rules";
+import {
+  gameBalance,
+  getUpcomingCMEWarning,
+  isAffordable,
+} from "./rules";
 import { createInitialState, step } from "./step";
 import type { Decision, GameEvent } from "./types";
 
@@ -75,6 +79,31 @@ describe("mission engine", () => {
     expect(third.report.radiationMultiplier).toBe(
       gameBalance.radiation.multipliers.cme,
     );
+  });
+
+  it("shows a CME warning before the player makes the protected-day decision", () => {
+    const flare: GameEvent = {
+      id: "flare-with-cme",
+      date: "2024-05-01",
+      type: "flare",
+      hasCME: true,
+      cmeDelayDays: 2,
+    };
+    const dayOneWarning = getUpcomingCMEWarning(
+      [],
+      [flare],
+      1,
+      gameBalance.commsLevels[2].warningDays,
+    );
+    const dayTwoWarning = getUpcomingCMEWarning(
+      [{ eventId: flare.id, arrivalDay: 3 }],
+      [],
+      2,
+      gameBalance.commsLevels[1].warningDays,
+    );
+
+    expect(dayOneWarning).toEqual({ daysAhead: 2, eventIds: [flare.id] });
+    expect(dayTwoWarning).toEqual({ daysAhead: 1, eventIds: [flare.id] });
   });
 
   it("delivers Earth information about the previous day", () => {
