@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { isEventsArchive, type EventsArchive } from "./archive";
+import {
+  isEventsArchive,
+  isSourceCatalog,
+  type EventsArchive,
+  type SourceCatalog,
+} from "./archive";
 
 const archiveFixture: EventsArchive = {
   meta: {
@@ -23,6 +28,25 @@ const archiveFixture: EventsArchive = {
       eventIds: index === 0 ? ["synthetic-test-event"] : [],
     })),
   },
+};
+
+const sourceCatalogFixture: SourceCatalog = {
+  meta: {
+    source: "synthetic validation fixture",
+    retrieved: "2026-11-14",
+    mode: "archive",
+    notes: "Test-only sources.",
+  },
+  sources: [
+    {
+      id: "sample-reference",
+      name: "Sample reference",
+      url: "https://example.test/data",
+      usedFor_fr: "Référence de test.",
+      usedFor_en: "Test reference.",
+      mode: "reference",
+    },
+  ],
 };
 
 describe("archive validation", () => {
@@ -57,5 +81,16 @@ describe("archive validation", () => {
     invalidArchive.events[0].donkiUrl = "javascript:alert(1)";
 
     expect(isEventsArchive(invalidArchive)).toBe(false);
+  });
+
+  it("accepts reference entries in a source catalog", () => {
+    expect(isSourceCatalog(sourceCatalogFixture)).toBe(true);
+  });
+
+  it("rejects unsupported source modes", () => {
+    const invalidCatalog = structuredClone(sourceCatalogFixture);
+    (invalidCatalog.sources[0] as { mode: string }).mode = "live";
+
+    expect(isSourceCatalog(invalidCatalog)).toBe(false);
   });
 });

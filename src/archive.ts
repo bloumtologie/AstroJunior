@@ -28,7 +28,7 @@ export type SourceEntry = {
   url: string;
   usedFor_fr: string;
   usedFor_en: string;
-  mode: "archive";
+  mode: "archive" | "reference";
 };
 
 export type SourceCatalog = {
@@ -154,7 +154,7 @@ export function isSourceCatalog(value: unknown): value is SourceCatalog {
         isHttpUrl(source.url) &&
         typeof source.usedFor_fr === "string" &&
         typeof source.usedFor_en === "string" &&
-        source.mode === "archive",
+        (source.mode === "archive" || source.mode === "reference"),
     )
   );
 }

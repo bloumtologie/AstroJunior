@@ -1,5 +1,6 @@
 import { getTradeoffInsight } from "../engine/debrief";
 import type { DayReport, GameEvent } from "../engine/types";
+import { issRadiationSample } from "../data/radiationReference";
 import type { Locale, TextKey } from "../i18n";
 import { t } from "../i18n";
 
@@ -106,6 +107,24 @@ export function Debrief({
           )}
         </div>
       )}
+      <div className="mt-4 rounded-xl border border-slate-600 bg-slate-800/80 p-4">
+        <h3 className="font-bold">{t(locale, "issRadiationSampleTitle")}</h3>
+        <p className="mt-2 leading-7 text-slate-200">
+          {t(locale, "issRadiationSampleText", {
+            timestamp: issRadiationSample.timestamp,
+            instrument: issRadiationSample.instrument,
+            doseRate: issRadiationSample.absorbedDoseRateUGyPerHour.toFixed(3),
+          })}
+        </p>
+        <a
+          className="mt-3 inline-block font-semibold text-sky-200 underline underline-offset-4"
+          href={issRadiationSample.sourceUrl}
+          rel="noreferrer"
+          target="_blank"
+        >
+          {t(locale, "openRadlabSample")}
+        </a>
+      </div>
       <button className="primary-button mt-6 w-full" onClick={onReplay} type="button">
         {t(locale, "replay")}
       </button>

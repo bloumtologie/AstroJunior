@@ -88,6 +88,10 @@ const messages = {
     nasaReferenceText:
       "Le jour {day}, la partie s’appuyait sur un événement {eventType} de l’archive NASA DONKI du {date}. Avec le bouclier {shield}, la dose simulée était de {dose} mSv. Cette valeur est un résultat du jeu, pas une mesure sur Mars.",
     openDonkiEvent: "Voir la fiche de l’événement NASA",
+    issRadiationSampleTitle: "Exemple de mesure sur l’ISS — pas sur Mars",
+    issRadiationSampleText:
+      "Le {timestamp}, le dosimètre {instrument} de l’ISS a enregistré un débit de dose absorbée de {doseRate} µGy/heure. C’est un échantillon ponctuel, pas une moyenne ni une mesure de la surface martienne.",
+    openRadlabSample: "Ouvrir la requête NASA RadLab",
     cmeEvent: "CME",
     sepEvent: "particules solaires (SEP)",
     flareEvent: "éruption solaire",
@@ -222,6 +226,10 @@ const messages = {
     nasaReferenceText:
       "On day {day}, the game used a {eventType} from the NASA DONKI archive dated {date}. With the {shield} shield, the simulated dose was {dose} mSv. This is a game result, not a Mars measurement.",
     openDonkiEvent: "View the NASA event record",
+    issRadiationSampleTitle: "ISS measurement example — not Mars",
+    issRadiationSampleText:
+      "At {timestamp}, the ISS {instrument} dosimeter recorded an absorbed dose rate of {doseRate} µGy/hour. This is a single sample, not an average or a measurement of the Martian surface.",
+    openRadlabSample: "Open the NASA RadLab query",
     cmeEvent: "CME",
     sepEvent: "solar particle (SEP) event",
     flareEvent: "solar flare",

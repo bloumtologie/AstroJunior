@@ -49,3 +49,17 @@ Les coûts, stocks et facteurs de santé de `src/data/balance.json` sont des
 paramètres de jeu et non des mesures NASA. Les scripts `predev` et `prebuild`
 copient ce fichier canonique vers `public/data/balance.json`. La dose de base
 de 0,5 mSv/jour n’est pas une mesure de surface martienne.
+
+## Référence de radiation RadLab
+
+Le bilan affiche aussi un échantillon NASA OSDR RadLab du dosimètre DosTel2 sur
+l’ISS : **10,216 µGy/heure**, à l’horodatage `2022-04-01T23:00:00`. La requête
+et sa réponse sont liées dans le bilan et dans [sources.json](../public/data/sources.json).
+C’est un point de mesure de débit de dose absorbée, pas une moyenne de mission,
+une dose journalière ou une mesure sur Mars. Il est présenté séparément afin
+que les données de l’ISS ne soient pas confondues avec le scénario martien.
+
+L’étude de référence de Curiosity RAD est répertoriée dans la même liste de
+sources. Son résumé NASA décrit environ 300 jours de mesures martiennes, mais
+le chiffre de dose de surface n’est pas repris dans le jeu tant que sa valeur
+exacte ne peut pas être vérifiée dans le texte complet.
