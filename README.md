@@ -31,6 +31,8 @@ npm run dev
 
 Ouvre l’adresse locale affichée par Vite, généralement `http://localhost:5173`.
 Le guide détaillé pour les coéquipiers est dans [ETAPES.md](./ETAPES.md).
+Pour découvrir l’interface et suivre un exemple de partie, consulte
+[SCENARIO.md](./SCENARIO.md).
 
 ## Commandes utiles
 
@@ -76,4 +78,5 @@ consulte [data/README.md](./data/README.md). Ne commite jamais de fichier
    d’interface, sauf si la tâche demande explicitement de les modifier.
 
 Pour le détail de l’installation et du lancement, suis
-[ETAPES.md](./ETAPES.md).
+[ETAPES.md](./ETAPES.md). Pour une explication guidée d’une partie,
+consulte [SCENARIO.md](./SCENARIO.md).
