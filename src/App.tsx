@@ -13,7 +13,7 @@ import {
   type SourceCatalog,
   type EventsArchive,
 } from "./archive";
-import { t, type Locale } from "./i18n";
+import { t, type Locale, type TextKey } from "./i18n";
 import { Briefing } from "./ui/Briefing";
 import { Controls } from "./ui/Controls";
 import { DayResult } from "./ui/DayResult";
@@ -169,6 +169,33 @@ function App() {
     archive && report
       ? archive.scenario.days.find((item) => item.day === report.day)?.date
       : undefined;
+  const nasaReference = useMemo(() => {
+    if (!archive) return undefined;
+
+    const reportsByDose = [...gameState.log].sort(
+      (left, right) => right.doseDay - left.doseDay,
+    );
+    for (const missionReport of reportsByDose) {
+      const reportEvents = missionReport.eventRefs
+        .map((reference) =>
+          archive.events.find((event) => event.id === reference.id),
+        )
+        .filter((event) => event !== undefined);
+      const event =
+        reportEvents.find((item) => item.type === "sep") ?? reportEvents[0];
+      if (!event) continue;
+
+      const shieldNames: TextKey[] = ["none", "light", "strong", "max"];
+      return {
+        event,
+        date: formatArchiveDate(event.date, locale),
+        day: missionReport.day,
+        dose: missionReport.doseDay.toFixed(2),
+        shield: shieldNames[missionReport.decision.shield],
+      };
+    }
+    return undefined;
+  }, [archive, gameState.log, locale]);
   const dayEvents = useMemo(() => {
     if (!archive) return [];
     const scenarioDay = archive.scenario.days.find(
@@ -346,6 +373,7 @@ function App() {
               crewHealth={gameState.crewHealth}
               log={gameState.log}
               locale={locale}
+              nasaReference={nasaReference}
               onReplay={startMission}
             />
           )}

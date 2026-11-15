@@ -1,17 +1,37 @@
 import { getTradeoffInsight } from "../engine/debrief";
-import type { DayReport } from "../engine/types";
-import type { Locale } from "../i18n";
+import type { DayReport, GameEvent } from "../engine/types";
+import type { Locale, TextKey } from "../i18n";
 import { t } from "../i18n";
+
+type NasaReference = {
+  event: GameEvent;
+  date: string;
+  day: number;
+  dose: string;
+  shield: TextKey;
+};
 
 type Props = {
   locale: Locale;
   log: DayReport[];
   crewHealth: number;
+  nasaReference?: NasaReference;
   onReplay: () => void;
 };
 
-export function Debrief({ locale, log, crewHealth, onReplay }: Props) {
+export function Debrief({
+  locale,
+  log,
+  crewHealth,
+  nasaReference,
+  onReplay,
+}: Props) {
   const tradeoff = getTradeoffInsight(log);
+  const eventTypeKey: Record<GameEvent["type"], TextKey> = {
+    cme: "cmeEvent",
+    flare: "flareEvent",
+    sep: "sepEvent",
+  };
   const charts = [
     { key: "energyChart" as const, value: (report: DayReport) => report.energyUsed, max: 100 },
     { key: "oxygenChart" as const, value: (report: DayReport) => report.oxygen, max: 60 },
@@ -62,6 +82,30 @@ export function Debrief({ locale, log, crewHealth, onReplay }: Props) {
           {t(locale, tradeoff.key, tradeoff.params)}
         </p>
       </div>
+      {nasaReference && (
+        <div className="mt-4 rounded-xl border border-slate-600 bg-slate-800/80 p-4">
+          <h3 className="font-bold">{t(locale, "nasaReference")}</h3>
+          <p className="mt-2 leading-7 text-slate-200">
+            {t(locale, "nasaReferenceText", {
+              day: nasaReference.day,
+              eventType: t(locale, eventTypeKey[nasaReference.event.type]),
+              date: nasaReference.date,
+              shield: t(locale, nasaReference.shield),
+              dose: nasaReference.dose,
+            })}
+          </p>
+          {nasaReference.event.donkiUrl && (
+            <a
+              className="mt-3 inline-block font-semibold text-sky-200 underline underline-offset-4"
+              href={nasaReference.event.donkiUrl}
+              rel="noreferrer"
+              target="_blank"
+            >
+              {t(locale, "openDonkiEvent")}
+            </a>
+          )}
+        </div>
+      )}
       <button className="primary-button mt-6 w-full" onClick={onReplay} type="button">
         {t(locale, "replay")}
       </button>
