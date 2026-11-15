@@ -109,8 +109,8 @@ export function Briefing({
               onChange={(event) => onLocaleChange(event.target.value as Locale)}
               value={locale}
             >
-              <option className="bg-night" value="fr">FR</option>
-              <option className="bg-night" value="en">EN</option>
+              <option className="bg-night" value="fr">🇫🇷</option>
+              <option className="bg-night" value="en">🇬🇧</option>
             </select>
           </label>
           <button

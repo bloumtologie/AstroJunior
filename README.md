@@ -1,48 +1,79 @@
 # Mission Outpost
 
-Prototype de jeu éducatif où le joueur dirige un avant-poste sur Mars pendant
-sept jours. Il doit arbitrer entre la vie de l'équipage, le bouclier,
-les communications et la science.
+Mission Outpost est un jeu éducatif en français et en anglais destiné aux
+enfants de 7 à 12 ans. Le joueur dirige un avant-poste sur Mars pendant sept
+jours et répartit son énergie entre la survie, le bouclier, les communications
+et la science.
 
-## Démarrer en local
+La langue affichée par défaut est l’anglais. Le sélecteur de langue utilise les
+drapeaux 🇬🇧 et 🇫🇷 ; son libellé accessible reste « Language » ou « Langue ».
 
-Prérequis : Node.js et npm.
+## Fonctionnalités
+
+- Interface React mobile-first, illustrations SVG et styles Tailwind/CSS.
+- Choix d’un plan quotidien avec dix piles d’énergie et quatre postes.
+- Scène visuelle de la base, événements solaires, bilan quotidien et débrief.
+- Textes en français et en anglais, lecture vocale optionnelle via Web Speech
+  API, et prise en compte de `prefers-reduced-motion`.
+- Archive d’événements solaires NASA intégrée au projet : le jeu lit les
+  fichiers JSON locaux et n’appelle pas l’API NASA depuis le navigateur.
+
+## Démarrage rapide
+
+Prérequis : Node.js 20 LTS (ou version compatible avec Vite 6) et npm.
 
 ```sh
-npm install
+git clone --branch Test_V1 --single-branch https://github.com/bloumtologie/AstroJunior.git
+cd AstroJunior
+npm ci
 npm run dev
 ```
 
-Le prototype s'ouvre sur le serveur local indiqué par Vite. Pour vérifier le
-build de production :
+Ouvre l’adresse locale affichée par Vite, généralement `http://localhost:5173`.
+Le guide détaillé pour les coéquipiers est dans [ETAPES.md](./ETAPES.md).
+
+## Commandes utiles
 
 ```sh
-npm run build
-npm run preview
+npm run dev       # Démarrer le serveur de développement
+npm test          # Exécuter les tests automatisés
+npm run build     # Vérifier les types et créer le build de production
+npm run preview   # Prévisualiser le build après npm run build
 ```
 
-## État du prototype
+## Organisation du projet
 
-Le moteur déterministe, les contrôles de décision, les jauges, le bilan
-quotidien, le débrief, le glossaire et les panneaux Sources/Limites sont en
-place. L'archive NASA vérifiée est intégrée : elle contient les données DONKI
-CME et SEP récupérées le 15 novembre 2026 pour mai 2024, et sélectionne les
-sept jours du 10 au 16 mai. Les éruptions FLR ne sont pas incluses : leur route
-DONKI a renvoyé HTTP 404 lors de la vérification.
+```text
+src/
+  engine/     règles, simulation et types du jeu
+  data/       paramètres et références de données
+  ui/         écrans, contrôles et scènes React/SVG
+  App.tsx     navigation entre les écrans et orchestration
+  i18n.ts     dictionnaire français/anglais
+public/data/  archive JSON chargée par le navigateur
+data/         outils et documentation de l’archive
+scripts/      scripts de synchronisation des paramètres
+```
 
-Le navigateur ne fait aucun appel NASA : il lit les fichiers JSON archivés.
-Pour régénérer l'archive, suivre les instructions de [data/README.md](./data/README.md).
-Les paramètres numériques de [l'équilibrage](./public/data/balance.json) sont
-des valeurs de jeu, pas des mesures NASA. Les hypothèses sont consignées dans
+Le moteur et les paramètres de simulation sont distincts de l’interface.
+Les valeurs d’équilibrage sont des paramètres de jeu, pas des mesures NASA.
+Les hypothèses et décisions de prototype sont consignées dans
 [DECISIONS.md](./DECISIONS.md).
 
-## Vérifications
+## Données NASA
 
-```sh
-npm test
-npm run build
-```
+L’application locale utilise les fichiers archivés dans `public/data/` ; une
+clé API n’est pas nécessaire pour lancer le jeu. Pour régénérer les données,
+consulte [data/README.md](./data/README.md). Ne commite jamais de fichier
+`.env` ni de clé API.
 
-Les tests comprennent une simulation de trois stratégies sur un scénario
-synthétique de mécanique et sur l'archive DONKI de mai 2024. Seule la seconde
-est constituée de données NASA archivées.
+## Contribuer
+
+1. Crée une branche de travail à partir de `Test_V1`.
+2. Installe les dépendances avec `npm ci`.
+3. Lance `npm test` et `npm run build` avant de proposer tes changements.
+4. Garde les modifications du moteur et des données séparées des changements
+   d’interface, sauf si la tâche demande explicitement de les modifier.
+
+Pour le détail de l’installation et du lancement, suis
+[ETAPES.md](./ETAPES.md).

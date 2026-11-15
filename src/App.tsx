@@ -70,7 +70,7 @@ function playCountdownTone() {
 }
 
 function App() {
-  const [locale, setLocale] = useState<Locale>("fr");
+  const [locale, setLocale] = useState<Locale>("en");
   const [loadState, setLoadState] = useState<LoadState>("loading");
   const [archiveError, setArchiveError] = useState<ArchiveLoadError | null>(null);
   const [archive, setArchive] = useState<EventsArchive | null>(null);
@@ -353,8 +353,8 @@ function App() {
                 onChange={(event) => setLocale(event.target.value as Locale)}
                 value={locale}
               >
-                <option value="fr">{t(locale, "french")}</option>
-                <option value="en">{t(locale, "english")}</option>
+                <option value="fr">🇫🇷</option>
+                <option value="en">🇬🇧</option>
               </select>
               <button
                 aria-label={t(locale, "homeBack")}
