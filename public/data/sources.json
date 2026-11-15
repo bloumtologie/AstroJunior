@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "source": "NASA DONKI and NASA Open APIs",
+    "retrieved": "2026-11-14",
+    "mode": "archive",
+    "notes": "Only sources used by the archived event extraction are listed."
+  },
+  "sources": [
+    {
+      "id": "donki",
+      "name": "NASA DONKI",
+      "url": "https://ccmc.gsfc.nasa.gov/tools/DONKI/",
+      "usedFor_fr": "Catalogue NASA des événements de météorologie spatiale.",
+      "usedFor_en": "NASA catalog of space weather events.",
+      "mode": "archive"
+    },
+    {
+      "id": "nasa-open-api",
+      "name": "NASA Open APIs",
+      "url": "https://api.nasa.gov/",
+      "usedFor_fr": "Récupération des événements DONKI CME et SEP archivés.",
+      "usedFor_en": "Retrieval of archived DONKI CME and SEP events.",
+      "mode": "archive"
+    }
+  ]
+}
