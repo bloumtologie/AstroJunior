@@ -88,6 +88,10 @@ const messages = {
     nasaReferenceText:
       "Le jour {day}, la partie s’appuyait sur un événement {eventType} de l’archive NASA DONKI du {date}. Avec le bouclier {shield}, la dose simulée était de {dose} mSv. Cette valeur est un résultat du jeu, pas une mesure sur Mars.",
     openDonkiEvent: "Voir la fiche de l’événement NASA",
+    marsRadiationSampleTitle: "Repère de radiation mesuré sur Mars",
+    marsRadiationSampleText:
+      "NASA rapporte une dose moyenne quotidienne de {dose} mSv mesurée par Curiosity RAD à {location} pendant {period}. C’est une mesure historique, distincte de la dose simulée par cette partie et de l’échantillon pris sur l’ISS.",
+    openMarsRadiationSource: "Voir le communiqué NASA sur Curiosity",
     issRadiationSampleTitle: "Exemple de mesure sur l’ISS — pas sur Mars",
     issRadiationSampleText:
       "Le {timestamp}, le dosimètre {instrument} de l’ISS a enregistré un débit de dose absorbée de {doseRate} µGy/heure. C’est un échantillon ponctuel, pas une moyenne ni une mesure de la surface martienne.",
@@ -226,6 +230,10 @@ const messages = {
     nasaReferenceText:
       "On day {day}, the game used a {eventType} from the NASA DONKI archive dated {date}. With the {shield} shield, the simulated dose was {dose} mSv. This is a game result, not a Mars measurement.",
     openDonkiEvent: "View the NASA event record",
+    marsRadiationSampleTitle: "Measured radiation reference from Mars",
+    marsRadiationSampleText:
+      "NASA reports an average daily dose of {dose} mSv measured by Curiosity RAD at {location} during {period}. This is a historical measurement, separate from this game's simulated dose and from the ISS sample.",
+    openMarsRadiationSource: "Read the NASA Curiosity release",
     issRadiationSampleTitle: "ISS measurement example — not Mars",
     issRadiationSampleText:
       "At {timestamp}, the ISS {instrument} dosimeter recorded an absorbed dose rate of {doseRate} µGy/hour. This is a single sample, not an average or a measurement of the Martian surface.",

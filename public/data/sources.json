@@ -32,10 +32,10 @@
     },
     {
       "id": "curiosity-rad-study",
-      "name": "NASA NTRS — Curiosity RAD surface radiation study",
-      "url": "https://ntrs.nasa.gov/citations/20180007641",
-      "usedFor_fr": "Étude de référence décrivant des mesures RAD de dose absorbée et dose équivalente à la surface de Mars sur environ 300 jours. Aucune valeur numérique n’est reprise ici sans accès au texte complet.",
-      "usedFor_en": "Reference study describing RAD absorbed-dose and dose-equivalent measurements on Mars over about 300 days. No numerical value is reproduced here without access to the full text.",
+      "name": "NASA — résultats de Curiosity sur la radiation de surface",
+      "url": "https://www.nasa.gov/news-release/nasa-rover-results-include-first-age-measurement-on-mars-and-help-for-human-exploration/",
+      "usedFor_fr": "NASA rapporte une moyenne de 0,67 mSv par jour à Gale Crater entre août 2012 et juin 2013, mesurée par RAD. Il s’agit d’une référence historique, pas de la dose du jeu.",
+      "usedFor_en": "NASA reports an average of 0.67 mSv per day at Gale Crater from August 2012 to June 2013, measured by RAD. This is a historical reference, not the game's dose.",
       "mode": "reference"
     }
   ]

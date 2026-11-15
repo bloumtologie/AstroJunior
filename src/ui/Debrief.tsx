@@ -1,6 +1,9 @@
 import { getTradeoffInsight } from "../engine/debrief";
 import type { DayReport, GameEvent } from "../engine/types";
-import { issRadiationSample } from "../data/radiationReference";
+import {
+  curiositySurfaceRadiation,
+  issRadiationSample,
+} from "../data/radiationReference";
 import type { Locale, TextKey } from "../i18n";
 import { t } from "../i18n";
 
@@ -107,6 +110,26 @@ export function Debrief({
           )}
         </div>
       )}
+      <div className="mt-4 rounded-xl border border-orange-200/30 bg-orange-200/10 p-4">
+        <h3 className="font-bold text-orange-100">
+          {t(locale, "marsRadiationSampleTitle")}
+        </h3>
+        <p className="mt-2 leading-7 text-slate-100">
+          {t(locale, "marsRadiationSampleText", {
+            location: curiositySurfaceRadiation.location,
+            period: curiositySurfaceRadiation.period,
+            dose: curiositySurfaceRadiation.averageDailyDoseEquivalentMSv.toFixed(2),
+          })}
+        </p>
+        <a
+          className="mt-3 inline-block font-semibold text-sky-200 underline underline-offset-4"
+          href={curiositySurfaceRadiation.sourceUrl}
+          rel="noreferrer"
+          target="_blank"
+        >
+          {t(locale, "openMarsRadiationSource")}
+        </a>
+      </div>
       <div className="mt-4 rounded-xl border border-slate-600 bg-slate-800/80 p-4">
         <h3 className="font-bold">{t(locale, "issRadiationSampleTitle")}</h3>
         <p className="mt-2 leading-7 text-slate-200">

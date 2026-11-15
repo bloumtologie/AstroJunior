@@ -59,7 +59,8 @@ C’est un point de mesure de débit de dose absorbée, pas une moyenne de missi
 une dose journalière ou une mesure sur Mars. Il est présenté séparément afin
 que les données de l’ISS ne soient pas confondues avec le scénario martien.
 
-L’étude de référence de Curiosity RAD est répertoriée dans la même liste de
-sources. Son résumé NASA décrit environ 300 jours de mesures martiennes, mais
-le chiffre de dose de surface n’est pas repris dans le jeu tant que sa valeur
-exacte ne peut pas être vérifiée dans le texte complet.
+Le débrief cite également le communiqué NASA sur Curiosity RAD, qui rapporte
+une moyenne de **0,67 mSv/jour** à Gale Crater entre août 2012 et juin 2013.
+C’est un repère de dose moyenne historique, mesuré sur Mars et distinct de la
+dose simulée dans la partie comme de l’échantillon ponctuel ISS. Ce chiffre
+n’est pas une prévision, ni une mesure des conditions actuelles sur Mars.
