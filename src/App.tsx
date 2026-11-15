@@ -24,6 +24,17 @@ import { SourcesPanel } from "./ui/SourcesPanel";
 
 type Screen = "briefing" | "decision" | "result" | "debrief";
 type LoadState = "loading" | "ready" | "error";
+type ArchiveLoadError =
+  | { key: "archiveHttpError"; params: { file: string; status: number } }
+  | { key: "archiveNotJson"; params: { file: string } }
+  | { key: "archiveInvalid"; params: Record<string, never> }
+  | { key: "archiveRequestFailed"; params: Record<string, never> };
+
+class ArchiveLoadFailure extends Error {
+  constructor(readonly details: ArchiveLoadError) {
+    super(details.key);
+  }
+}
 
 const initialDecision: Decision = {
   life: 1,
@@ -35,7 +46,7 @@ const initialDecision: Decision = {
 function App() {
   const [locale, setLocale] = useState<Locale>("fr");
   const [loadState, setLoadState] = useState<LoadState>("loading");
-  const [archiveError, setArchiveError] = useState("");
+  const [archiveError, setArchiveError] = useState<ArchiveLoadError | null>(null);
   const [archive, setArchive] = useState<EventsArchive | null>(null);
   const [sources, setSources] = useState<SourceCatalog["sources"]>([]);
   const [screen, setScreen] = useState<Screen>("briefing");
@@ -46,7 +57,7 @@ function App() {
 
   async function loadArchive() {
     setLoadState("loading");
-    setArchiveError("");
+    setArchiveError(null);
 
     try {
       const [eventsResponse, sourcesResponse] = await Promise.all([
@@ -54,24 +65,36 @@ function App() {
         fetch("/data/sources.json"),
       ]);
       if (!eventsResponse.ok) {
-        throw new Error(`events.json returned HTTP ${eventsResponse.status}`);
+        throw new ArchiveLoadFailure({
+          key: "archiveHttpError",
+          params: { file: "events.json", status: eventsResponse.status },
+        });
       }
       if (!sourcesResponse.ok) {
-        throw new Error(`sources.json returned HTTP ${sourcesResponse.status}`);
+        throw new ArchiveLoadFailure({
+          key: "archiveHttpError",
+          params: { file: "sources.json", status: sourcesResponse.status },
+        });
       }
       if (
         !eventsResponse.headers
           .get("content-type")
           ?.includes("application/json")
       ) {
-        throw new Error("events.json is missing or did not return JSON.");
+        throw new ArchiveLoadFailure({
+          key: "archiveNotJson",
+          params: { file: "events.json" },
+        });
       }
       if (
         !sourcesResponse.headers
           .get("content-type")
           ?.includes("application/json")
       ) {
-        throw new Error("sources.json is missing or did not return JSON.");
+        throw new ArchiveLoadFailure({
+          key: "archiveNotJson",
+          params: { file: "sources.json" },
+        });
       }
 
       const [eventsData, sourcesData]: [unknown, unknown] = await Promise.all([
@@ -83,7 +106,10 @@ function App() {
         !isSourceCatalog(sourcesData) ||
         eventsData.scenario.days.length !== gameBalance.durationDays
       ) {
-        throw new Error("Archive metadata or scenario length is invalid.");
+        throw new ArchiveLoadFailure({
+          key: "archiveInvalid",
+          params: {},
+        });
       }
 
       setArchive(eventsData);
@@ -93,7 +119,11 @@ function App() {
       setArchive(null);
       setLoadState("error");
       setArchiveError(
-        error instanceof Error ? error.message : "Unknown archive loading error.",
+        error instanceof ArchiveLoadFailure
+          ? error.details
+          : error instanceof SyntaxError
+            ? { key: "archiveInvalid", params: {} }
+            : { key: "archiveRequestFailed", params: {} },
       );
     }
   }
@@ -181,8 +211,11 @@ function App() {
     loadState === "loading"
       ? t(locale, "loading")
       : loadState === "error"
-        ? `${t(locale, "archiveError")} (${archiveError})`
+        ? `${t(locale, "archiveError")} ${archiveError ? t(locale, archiveError.key, archiveError.params) : ""}`
         : undefined;
+  const archiveErrorMessage = archiveError
+    ? t(locale, archiveError.key, archiveError.params)
+    : "";
 
   return (
     <div className="min-h-screen px-4 py-5 sm:px-7 sm:py-8">
@@ -209,7 +242,7 @@ function App() {
           <div className="panel mb-6 border-amber-300/40 p-5" role="alert">
             <h2 className="font-bold text-amber-100">{t(locale, "archiveErrorTitle")}</h2>
             <p className="mt-2 text-sm leading-6 text-slate-200">
-              {t(locale, "archiveError")} {archiveError}
+              {t(locale, "archiveError")} {archiveErrorMessage}
             </p>
             <button className="secondary-button mt-4" onClick={() => void loadArchive()} type="button">
               {t(locale, "tryAgain")}

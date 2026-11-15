@@ -11,6 +11,11 @@ const messages = {
     loading: "Chargement de l’archive…",
     archiveErrorTitle: "Archive indisponible",
     archiveError: "La mission ne démarre pas sans données d’archive vérifiées.",
+    archiveHttpError: "Le fichier {file} a répondu avec le code HTTP {status}.",
+    archiveNotJson: "Le fichier {file} n’a pas fourni une réponse JSON.",
+    archiveInvalid: "Le contenu de l’archive est incomplet ou invalide.",
+    archiveRequestFailed:
+      "Impossible de joindre l’archive. Vérifie que le serveur fonctionne.",
     tryAgain: "Réessayer",
     phase: "Mission",
     briefingEyebrow: "Centre de contrôle · Mars, cratère Jezero",
@@ -124,6 +129,11 @@ const messages = {
     loading: "Loading archive…",
     archiveErrorTitle: "Archive unavailable",
     archiveError: "The mission cannot start without verified archive data.",
+    archiveHttpError: "The {file} file returned HTTP {status}.",
+    archiveNotJson: "The {file} file did not return JSON.",
+    archiveInvalid: "The archive content is incomplete or invalid.",
+    archiveRequestFailed:
+      "Could not reach the archive. Check that the server is running.",
     tryAgain: "Try again",
     phase: "Mission",
     briefingEyebrow: "Mission control · Mars, Jezero crater",
