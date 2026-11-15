@@ -25,11 +25,13 @@ npm run preview
 
 Le moteur déterministe, les contrôles de décision, les jauges, le bilan
 quotidien, le débrief, le glossaire et les panneaux Sources/Limites sont en
-place. La partie reste bloquée tant que l'archive vérifiée `public/data/events.json`
-n'a pas été générée : le jeu n'invente pas de scénario de remplacement.
+place. L'archive NASA vérifiée est intégrée : elle contient les données DONKI
+CME et SEP récupérées le 15 novembre 2026 pour mai 2024, et sélectionne les
+sept jours du 10 au 16 mai. Les éruptions FLR ne sont pas incluses : leur route
+DONKI a renvoyé HTTP 404 lors de la vérification.
 
-Pour préparer l'archive, suivre les instructions de [data/README.md](./data/README.md).
 Le navigateur ne fait aucun appel NASA : il lit les fichiers JSON archivés.
+Pour régénérer l'archive, suivre les instructions de [data/README.md](./data/README.md).
 Les paramètres numériques de [l'équilibrage](./public/data/balance.json) sont
 des valeurs de jeu, pas des mesures NASA. Les hypothèses sont consignées dans
 [DECISIONS.md](./DECISIONS.md).
@@ -42,5 +44,5 @@ npm run build
 ```
 
 Les tests comprennent une simulation de trois stratégies sur un scénario
-synthétique de mécanique ; ce scénario de test n'est pas présenté comme une
-archive NASA.
+synthétique de mécanique et sur l'archive DONKI de mai 2024. Seule la seconde
+est constituée de données NASA archivées.
