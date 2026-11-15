@@ -1,6 +1,9 @@
 import unittest
+from unittest.mock import Mock
 
-from data.fetch_donki import choose_scenario, normalize_record
+import requests
+
+from data.fetch_donki import choose_scenario, fetch_records, normalize_record
 
 
 class NormalizeRecordTests(unittest.TestCase):
@@ -76,6 +79,20 @@ class ScenarioTests(unittest.TestCase):
             [day["eventIds"] for day in days],
             [[], [], [], [], [], ["first-a"], ["first-b"]],
         )
+
+
+class FetchTests(unittest.TestCase):
+    def test_network_errors_do_not_echo_the_api_key(self):
+        session = Mock()
+        session.get.side_effect = requests.ConnectionError(
+            "connection failed for https://api.nasa.gov/?api_key=secret-value"
+        )
+
+        with self.assertRaises(RuntimeError) as raised:
+            fetch_records(session, "CME", "secret-value")
+
+        self.assertIn("check network access and API key", str(raised.exception))
+        self.assertNotIn("secret-value", str(raised.exception))
 
 
 if __name__ == "__main__":

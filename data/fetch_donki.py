@@ -42,15 +42,21 @@ def api_key() -> str:
 
 
 def fetch_records(session: requests.Session, endpoint: str, key: str) -> list[dict[str, Any]]:
-    response = session.get(
-        f"{API_ROOT}/{endpoint}",
-        params={
-            "startDate": START_DATE.isoformat(),
-            "endDate": END_DATE.isoformat(),
-            "api_key": key,
-        },
-        timeout=(10, 60),
-    )
+    try:
+        response = session.get(
+            f"{API_ROOT}/{endpoint}",
+            params={
+                "startDate": START_DATE.isoformat(),
+                "endDate": END_DATE.isoformat(),
+                "api_key": key,
+            },
+            timeout=(10, 60),
+        )
+    except requests.RequestException:
+        raise RuntimeError(
+            f"DONKI {endpoint} request failed; check network access and API key."
+        ) from None
+
     try:
         response.raise_for_status()
     except requests.HTTPError as error:
