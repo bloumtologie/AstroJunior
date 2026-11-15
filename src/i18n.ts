@@ -24,6 +24,8 @@ const messages = {
       "Tu diriges un avant-poste martien. Chaque jour, répartis l’énergie entre la vie, le bouclier, les communications et la science.",
     briefingFact:
       "Les événements solaires affichés dans cette mission viennent d’une archive, pas d’un flux en direct.",
+    scenarioRange: "Dates de l’archive : du {start} au {end}.",
+    archiveDate: "Date de l’archive : {date}",
     startMission: "Commencer la mission",
     dataNotReady: "L’archive de mission n’est pas encore chargée.",
     day: "Jour {day} sur {total}",
@@ -142,6 +144,8 @@ const messages = {
       "You lead a Mars outpost. Each day, divide energy among life support, shielding, communications, and science.",
     briefingFact:
       "Solar events shown in this mission come from an archive, not a live feed.",
+    scenarioRange: "Archive dates: {start} to {end}.",
+    archiveDate: "Archive date: {date}",
     startMission: "Start mission",
     dataNotReady: "The mission archive has not loaded yet.",
     day: "Day {day} of {total}",

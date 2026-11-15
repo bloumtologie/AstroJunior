@@ -4,10 +4,16 @@ import { t } from "../i18n";
 type Props = {
   locale: Locale;
   disabledReason?: string;
+  scenarioRange?: string;
   onStart: () => void;
 };
 
-export function Briefing({ locale, disabledReason, onStart }: Props) {
+export function Briefing({
+  locale,
+  disabledReason,
+  scenarioRange,
+  onStart,
+}: Props) {
   return (
     <section className="panel mx-auto max-w-3xl p-6 sm:p-10">
       <p className="eyebrow">{t(locale, "briefingEyebrow")}</p>
@@ -20,6 +26,11 @@ export function Briefing({ locale, disabledReason, onStart }: Props) {
       <p className="mt-5 rounded-xl border border-sky-300/30 bg-sky-300/10 p-4 text-base leading-7 text-sky-100">
         {t(locale, "briefingFact")}
       </p>
+      {scenarioRange && (
+        <p className="mt-4 text-sm font-semibold text-slate-200">
+          {scenarioRange}
+        </p>
+      )}
       {disabledReason && (
         <p className="mt-5 text-sm text-amber-200" role="status">
           {disabledReason}

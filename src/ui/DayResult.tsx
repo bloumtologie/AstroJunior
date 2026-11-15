@@ -5,6 +5,7 @@ import { t } from "../i18n";
 type Props = {
   locale: Locale;
   report: DayReport;
+  archiveDate?: string;
   eventTitles: Record<string, string>;
   onContinue: () => void;
 };
@@ -12,6 +13,7 @@ type Props = {
 export function DayResult({
   locale,
   report,
+  archiveDate,
   eventTitles,
   onContinue,
 }: Props) {
@@ -23,6 +25,11 @@ export function DayResult({
   return (
     <section className="panel p-5 sm:p-7">
       <h2 className="section-title">{t(locale, "dailyReport", { day: report.day })}</h2>
+      {archiveDate && (
+        <p className="mt-2 text-sm text-slate-300">
+          {t(locale, "archiveDate", { date: archiveDate })}
+        </p>
+      )}
       <p className="mt-4 leading-7 text-slate-200">
         {t(locale, "decisionSummary", {
           life: t(locale, lifeNames[report.decision.life]),

@@ -43,6 +43,15 @@ const initialDecision: Decision = {
   science: 1,
 };
 
+function formatArchiveDate(date: string, locale: Locale): string {
+  return new Intl.DateTimeFormat(locale === "fr" ? "fr-FR" : "en-US", {
+    day: "numeric",
+    month: "long",
+    timeZone: "UTC",
+    year: "numeric",
+  }).format(new Date(`${date}T00:00:00Z`));
+}
+
 function App() {
   const [locale, setLocale] = useState<Locale>("fr");
   const [loadState, setLoadState] = useState<LoadState>("loading");
@@ -144,6 +153,22 @@ function App() {
       ),
     [archive, locale],
   );
+  const scenarioRange = archive
+    ? t(locale, "scenarioRange", {
+        start: formatArchiveDate(archive.scenario.days[0].date, locale),
+        end: formatArchiveDate(
+          archive.scenario.days[archive.scenario.days.length - 1].date,
+          locale,
+        ),
+      })
+    : undefined;
+  const currentScenarioDate = archive?.scenario.days.find(
+    (item) => item.day === gameState.day,
+  )?.date;
+  const reportArchiveDate =
+    archive && report
+      ? archive.scenario.days.find((item) => item.day === report.day)?.date
+      : undefined;
   const dayEvents = useMemo(() => {
     if (!archive) return [];
     const scenarioDay = archive.scenario.days.find(
@@ -268,16 +293,26 @@ function App() {
               disabledReason={missionDisabledReason}
               locale={locale}
               onStart={startMission}
+              scenarioRange={scenarioRange}
             />
           )}
           {screen === "decision" && (
             <>
-              <p className="eyebrow">
-                {t(locale, "day", {
-                  day: currentDay,
-                  total: gameBalance.durationDays,
-                })}
-              </p>
+              <div>
+                <p className="eyebrow">
+                  {t(locale, "day", {
+                    day: currentDay,
+                    total: gameBalance.durationDays,
+                  })}
+                </p>
+                {currentScenarioDate && (
+                  <p className="mt-1 text-sm text-slate-300">
+                    {t(locale, "archiveDate", {
+                      date: formatArchiveDate(currentScenarioDate, locale),
+                    })}
+                  </p>
+                )}
+              </div>
               <div className="grid gap-6 lg:grid-cols-[1.4fr_0.8fr]">
                 <Controls
                   cmeWarning={decisionCMEWarning}
@@ -293,6 +328,11 @@ function App() {
           {screen === "result" && report && (
             <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
               <DayResult
+                archiveDate={
+                  reportArchiveDate
+                    ? formatArchiveDate(reportArchiveDate, locale)
+                    : undefined
+                }
                 eventTitles={eventTitles}
                 locale={locale}
                 onContinue={continueMission}
