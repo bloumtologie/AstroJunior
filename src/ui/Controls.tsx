@@ -63,6 +63,13 @@ const choices: Choice[] = [
   },
 ];
 
+const choiceIcons: Record<Choice["key"], string> = {
+  life: "🫁",
+  shield: "🛡️",
+  comms: "📡",
+  science: "🔬",
+};
+
 type Props = {
   locale: Locale;
   decision: Decision;
@@ -106,6 +113,9 @@ export function Controls({
         {choices.map((choice) => (
           <fieldset key={choice.key}>
             <legend className="mb-2 text-base font-bold text-white">
+              <span aria-hidden="true" className="mr-2">
+                {choiceIcons[choice.key]}
+              </span>
               {t(locale, choice.label)}
             </legend>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -129,7 +139,14 @@ export function Controls({
                     }
                     type="button"
                   >
-                    <span>{t(locale, option.name)}</span>
+                    <span>
+                      {selected && (
+                        <span aria-hidden="true" className="mr-1">
+                          ✓
+                        </span>
+                      )}
+                      {t(locale, option.name)}
+                    </span>
                     <span className="mt-1 block text-xs font-medium opacity-80">
                       {option.cost} {t(locale, "energy")}
                     </span>
@@ -163,9 +180,10 @@ export function Controls({
       </div>
       {cmeWarning && (
         <p
-          className="mt-4 rounded-lg border border-amber-300/50 bg-amber-300/10 p-4 text-amber-100"
+          className="storm-alert mt-4 rounded-lg border border-amber-300/50 bg-amber-300/10 p-4 text-amber-100"
           role="alert"
         >
+          <span aria-hidden="true" className="mr-2">🌩️</span>
           {t(locale, "cmeWarning", { days: cmeWarning.daysAhead })}
         </p>
       )}

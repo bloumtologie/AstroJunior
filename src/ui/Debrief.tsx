@@ -23,6 +23,29 @@ type Props = {
   onReplay: () => void;
 };
 
+const confettiPieces = [
+  { x: 4, y: 8, color: "#fb923c", shape: "rect" },
+  { x: 10, y: 34, color: "#facc15", shape: "circle" },
+  { x: 16, y: 15, color: "#38bdf8", shape: "rect" },
+  { x: 22, y: 43, color: "#4ade80", shape: "circle" },
+  { x: 28, y: 5, color: "#f472b6", shape: "rect" },
+  { x: 34, y: 26, color: "#c4b5fd", shape: "circle" },
+  { x: 40, y: 13, color: "#fb923c", shape: "rect" },
+  { x: 46, y: 39, color: "#facc15", shape: "circle" },
+  { x: 52, y: 3, color: "#38bdf8", shape: "rect" },
+  { x: 58, y: 31, color: "#4ade80", shape: "circle" },
+  { x: 64, y: 18, color: "#f472b6", shape: "rect" },
+  { x: 70, y: 44, color: "#c4b5fd", shape: "circle" },
+  { x: 76, y: 10, color: "#fb923c", shape: "rect" },
+  { x: 82, y: 35, color: "#facc15", shape: "circle" },
+  { x: 88, y: 6, color: "#38bdf8", shape: "rect" },
+  { x: 95, y: 24, color: "#4ade80", shape: "circle" },
+  { x: 13, y: 20, color: "#f472b6", shape: "rect" },
+  { x: 37, y: 48, color: "#c4b5fd", shape: "circle" },
+  { x: 61, y: 7, color: "#fb923c", shape: "rect" },
+  { x: 85, y: 16, color: "#facc15", shape: "circle" },
+] as const;
+
 export function Debrief({
   locale,
   log,
@@ -44,6 +67,38 @@ export function Debrief({
   ];
 
   return (
+    <>
+    {crewHealth > 0 && (
+      <svg
+        aria-hidden="true"
+        className="confetti-overlay"
+        focusable="false"
+        preserveAspectRatio="none"
+        viewBox="0 0 100 100"
+      >
+        {confettiPieces.map((piece, index) => (
+          <g key={`${piece.x}-${index}`} transform={`translate(${piece.x} ${piece.y})`}>
+            <g
+              className="confetti-piece"
+              style={{ animationDelay: `${(index % 8) * 0.1}s` }}
+            >
+              {piece.shape === "rect" ? (
+                <rect
+                  fill={piece.color}
+                  height="1.8"
+                  rx="0.35"
+                  width="1"
+                  x="-0.5"
+                  y="-0.9"
+                />
+              ) : (
+                <circle cx="0" cy="0" fill={piece.color} r="0.65" />
+              )}
+            </g>
+          </g>
+        ))}
+      </svg>
+    )}
     <section className="panel p-5 sm:p-7">
       <h2 className="section-title">{t(locale, "debriefTitle")}</h2>
       <p className="mt-3 text-lg leading-7" role="status">
@@ -152,5 +207,6 @@ export function Debrief({
         {t(locale, "replay")}
       </button>
     </section>
+    </>
   );
 }

@@ -80,7 +80,8 @@ export function DayResult({
         </p>
       )}
       {report.cmeWarning && (
-        <p className="mt-4 rounded-lg border border-sky-300/50 bg-sky-300/10 p-4 text-sky-100">
+        <p className="storm-alert mt-4 rounded-lg border border-sky-300/50 bg-sky-300/10 p-4 text-sky-100" role="alert">
+          <span aria-hidden="true" className="mr-2">🌩️</span>
           {t(locale, "cmeWarning", { days: report.cmeWarning.daysAhead })}
         </p>
       )}

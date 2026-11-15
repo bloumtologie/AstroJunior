@@ -35,7 +35,7 @@ function Gauge({
         role="progressbar"
       >
         <div
-          className="h-full rounded-full bg-orange-300 transition-[width]"
+          className="gauge-fill h-full rounded-full bg-orange-300"
           style={{ width: `${percentage}%` }}
         />
       </div>
