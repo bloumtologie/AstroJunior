@@ -1,3 +1,4 @@
+import { getTradeoffInsight } from "../engine/debrief";
 import type { DayReport } from "../engine/types";
 import type { Locale } from "../i18n";
 import { t } from "../i18n";
@@ -10,6 +11,7 @@ type Props = {
 };
 
 export function Debrief({ locale, log, crewHealth, onReplay }: Props) {
+  const tradeoff = getTradeoffInsight(log);
   const charts = [
     { key: "energyChart" as const, value: (report: DayReport) => report.energyUsed, max: 100 },
     { key: "oxygenChart" as const, value: (report: DayReport) => report.oxygen, max: 60 },
@@ -52,6 +54,12 @@ export function Debrief({ locale, log, crewHealth, onReplay }: Props) {
           {crewHealth > 0
             ? t(locale, "lessonSurvived")
             : t(locale, "lessonFailed")}
+        </p>
+      </div>
+      <div className="mt-4 rounded-xl border border-sky-200/30 bg-sky-200/10 p-4">
+        <h3 className="font-bold text-sky-100">{t(locale, "tradeoffTitle")}</h3>
+        <p className="mt-2 leading-7 text-slate-100">
+          {t(locale, tradeoff.key, tradeoff.params)}
         </p>
       </div>
       <button className="primary-button mt-6 w-full" onClick={onReplay} type="button">

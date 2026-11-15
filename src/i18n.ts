@@ -83,6 +83,7 @@ const messages = {
     eventSources: "Événements et sources",
     nextDay: "Continuer",
     debriefTitle: "Bilan de mission",
+    tradeoffTitle: "Le compromis à retenir",
     missionSurvived: "Mission terminée : l’équipage est en vie.",
     missionFailed: "Mission interrompue : l’équipage n’a pas survécu.",
     dayHistory: "Chronologie de la mission",
@@ -95,6 +96,12 @@ const messages = {
       "Protéger l’équipage demande de l’énergie, qui ne peut plus servir ailleurs.",
     lessonFailed:
       "Les ressources et la protection comptent ensemble : négliger l’une peut mettre l’équipage en danger.",
+    "debrief.tradeoffMissed":
+      "Le jour {day}, augmenter la Vie d’un cran aurait produit {extraProduction} unités de plus d’oxygène et de nourriture, pour {extraEnergy} énergie supplémentaires. Cela aurait pu réduire la pénurie, sans garantir de l’éviter.",
+    "debrief.tradeoffNoShortage":
+      "Les stocks d’oxygène et de nourriture ne sont pas tombés à zéro pendant la mission.",
+    "debrief.tradeoffLifeMax":
+      "Le jour {day}, la Vie était déjà au maximum ; il n’y avait pas de cran supérieur pour produire davantage.",
     replay: "Rejouer avec un autre plan",
     glossary: "Petit glossaire",
     radiationTerm: "Dose de radiation",
@@ -203,6 +210,7 @@ const messages = {
     eventSources: "Events and sources",
     nextDay: "Continue",
     debriefTitle: "Mission debrief",
+    tradeoffTitle: "The tradeoff to remember",
     missionSurvived: "Mission complete: the crew is alive.",
     missionFailed: "Mission stopped: the crew did not survive.",
     dayHistory: "Mission timeline",
@@ -215,6 +223,12 @@ const messages = {
       "Protecting the crew takes energy that cannot be spent elsewhere.",
     lessonFailed:
       "Resources and protection both matter: neglecting either can put the crew at risk.",
+    "debrief.tradeoffMissed":
+      "On day {day}, increasing Life by one level would have produced {extraProduction} more units of oxygen and food for {extraEnergy} extra energy. It might have reduced the shortage, but could not guarantee avoiding it.",
+    "debrief.tradeoffNoShortage":
+      "Oxygen and food stocks did not reach zero during this mission.",
+    "debrief.tradeoffLifeMax":
+      "On day {day}, Life support was already at its highest level, so there was no higher setting to produce more.",
     replay: "Replay with a different plan",
     glossary: "Quick glossary",
     radiationTerm: "Radiation dose",
